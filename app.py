@@ -10,25 +10,24 @@ import os
 #Webside Design: Set the app to wide mode for a more professional appearance
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
-@st.cache_resource
-def load_models():
-
-    # DESCARGAR SOLO EL MODELO GRANDE (RF)
-    if not os.path.exists("model_RF.pkl"):
-        gdown.download("https://drive.google.com/uc?id=1ts197dJz7gO12A_oDWFuX4D45WW_skYj",
-            "model_RF.pkl", quiet=False)
 
 #Loading Models' Files / Scaler / Features
 @st.cache_resource
 def load_data():
-  model_RF = joblib.load("model_RF.pkl")
-  model_MLR = joblib.load("model_MLR.pkl")
-  model_SVMC = joblib.load("model_SVMC.pkl")
-  scaler = joblib.load("scaler.pkl")
-  model_features = joblib.load("model_features.pkl")
-  return model_RF, model_MLR, model_SVMC, scaler, model_features
+    # Descargar modelo si no existe
+    if not os.path.exists("model_RF.pkl"):
+        url = "https://drive.google.com/uc?id=1ts197dJz7gO12A_oDWFuX4D45WW_skYj"
+        gdown.download(url, "model_RF.pkl", quiet=False)
 
-model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
+    model_RF = joblib.load("model_RF.pkl")
+
+    # Los otros modelos (sí están en GitHub)
+    model_MLR = joblib.load("model_MLR.pkl")
+    model_SVMC = joblib.load("model_SVMC.pkl")
+    scaler = joblib.load("scaler.pkl")
+    model_features = joblib.load("model_features.pkl")
+
+    return model_RF, model_MLR, model_SVMC, scaler, model_features
 
 #Loading result tables
 @st.cache_data
