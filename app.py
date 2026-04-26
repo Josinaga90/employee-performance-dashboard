@@ -1,33 +1,30 @@
 
-import streamlit as st #Creating website
-import joblib #Downloading documents as ".pkl"
-import pandas as pd #Creating graphs / charts
-import matplotlib.pyplot as plt #Design and drawing tools
-import seaborn as sns #Design and drawing tools
+import streamlit as st
+import joblib
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 import gdown
 import os
 
-#Webside Design: Set the app to wide mode for a more professional appearance
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
-
-#Loading Models' Files / Scaler / Features
+# ================================
+# LOAD MODELS
+# ================================
 @st.cache_resource
 def load_data():
-    # Descargar modelo si no existe
     if not os.path.exists("model_RF.pkl"):
         url = "https://drive.google.com/uc?id=1ts197dJz7gO12A_oDWFuX4D45WW_skYj"
         gdown.download(url, "model_RF.pkl", quiet=False)
 
     model_RF = joblib.load("model_RF.pkl")
-
-    # Los otros modelos (sí están en GitHub)
     model_MLR = joblib.load("model_MLR.pkl")
     model_SVMC = joblib.load("model_SVMC.pkl")
     scaler = joblib.load("scaler.pkl")
     model_features = joblib.load("model_features.pkl")
 
-    return model_RF, model_MLR, model_SVMC, scaler, model_features
+    return model_RF, model_MLR, model_SVMC, scaler, list(model_features)
 
 #Loading result tables
 @st.cache_data
@@ -37,6 +34,7 @@ def load_tables():
   gender_fairness = pd.read_csv("gender_fairness.csv")
   return model_comparison, age_fairness, gender_fairness
 
+model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
 model_comparison, age_fairness, gender_fairness = load_tables()
 
 # Dashboard title
@@ -74,8 +72,8 @@ if section == "Individual Prediction":
     payzone = st.selectbox("Pay Zone", ["Zone A", "Zone B", "Zone C"])
 
     # Creatinginput data with the same columns used in training
-    input_data = pd.DataFrame(columns=model_features)
-    input_data.loc[0] = 0
+    input_data = pd.DataFrame([0]*len(model_features)).T
+    input_data.columns = model_features
 
     # Fill numeric variables
     if "Age" in input_data.columns:
