@@ -4,7 +4,6 @@ import joblib
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import gdown
 import os
 
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
@@ -14,10 +13,6 @@ st.set_page_config(page_title="Employee Performance Prediction Dashboard", layou
 # ================================
 @st.cache_resource
 def load_data():
-    if not os.path.exists("model_RF.pkl"):
-        url = "https://drive.google.com/uc?id=1ts197dJz7gO12A_oDWFuX4D45WW_skYj"
-        gdown.download(url, "model_RF.pkl", quiet=False)
-
     model_RF = joblib.load("model_RF.pkl")
     model_MLR = joblib.load("model_MLR.pkl")
     model_SVMC = joblib.load("model_SVMC.pkl")
@@ -29,10 +24,10 @@ def load_data():
 #Loading result tables
 @st.cache_data
 def load_tables():
-  model_comparison = pd.read_csv("model_comparison.csv")
-  age_fairness = pd.read_csv("age_fairness.csv")
-  gender_fairness = pd.read_csv("gender_fairness.csv")
-  return model_comparison, age_fairness, gender_fairness
+    model_comparison = pd.read_csv("model_comparison.csv")
+    age_fairness = pd.read_csv("age_fairness.csv")
+    gender_fairness = pd.read_csv("gender_fairness.csv")
+    return model_comparison, age_fairness, gender_fairness
 
 model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
 model_comparison, age_fairness, gender_fairness = load_tables()
