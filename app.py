@@ -59,10 +59,10 @@ if section == "Individual Prediction":
     selected_model = st.selectbox("Select Model",
         ["Random Forest", "Logistic Regression", "Support Vector Machine"])
 
-    age = st.number_input("Age", min_value=20, max_value=70, value=35)
-
-    current_rating = st.number_input("Current Employee Rating", min_value=1, max_value=5, value=3)
-
+    age = st.number_input("Age", min_value=18, max_value=70, value=35)
+    
+    tenure = st.number_input("Tenure (days in company)", min_value=0, value=1000)
+    
     gender = st.selectbox("Gender", ["Male", "Female"])
 
     race = st.selectbox("Race", ["White", "Black", "Hispanic", "Asian", "Other"])
@@ -72,15 +72,14 @@ if section == "Individual Prediction":
     payzone = st.selectbox("Pay Zone", ["Zone A", "Zone B", "Zone C"])
 
     # Creatinginput data with the same columns used in training
-    input_data = pd.DataFrame([0]*len(model_features)).T
-    input_data.columns = model_features
+    input_data = pd.DataFrame([[0]*len(model_features)], columns=model_features)
 
     # Fill numeric variables
     if "Age" in input_data.columns:
         input_data["Age"] = age
-
-    if "Current Employee Rating" in input_data.columns:
-        input_data["Current Employee Rating"] = current_rating
+        
+    if "Tenure" in input_data.columns:
+        input_data["Tenure"] = tenure
 
     if "GenderCode" in input_data.columns:
         input_data["GenderCode"] = 0 if gender == "Male" else 1
@@ -99,6 +98,8 @@ if section == "Individual Prediction":
     if payzone_column in input_data.columns:
         input_data[payzone_column] = 1
 
+    input_data = input_data[model_features]
+
     if st.button("Predict Performance"):
 
         if selected_model == "Random Forest":
@@ -109,8 +110,7 @@ if section == "Individual Prediction":
             prediction = model_MLR.predict(input_scaled)[0]
 
         else:
-            input_scaled = scaler.transform(input_data)
-            prediction = model_SVMC.predict(input_scaled)[0]
+            prediction = model_SVMC.predict(scaler.transform(input_data))[0]
 
         performance_labels = {
             0: "PIP",
@@ -131,21 +131,23 @@ elif section == "Model Comparison":
 
     st.write("This section compares the performance of Random Forest, "
         "Logistic Regression, and Support Vector Machine.")
+    
+    model_display = model_comparison.copy()
+
+    for col in model_display.columns[1:]:
+      model_display[col] = (model_display[col]*100).round(2)
 
     st.subheader("Model Performance Table")
-    st.dataframe(model_comparison)
+    st.dataframe(model_display)
 
-    if "Accuracy" in model_comparison.columns:
-        st.subheader("Accuracy Comparison")
-        st.bar_chart(model_comparison.set_index("Model")["Accuracy"])
+    st.subheader("Accuracy Comparison")
+    st.data_chart(model_display.set_index("Model")["Accuracy"])
 
-    if "F1_Macro" in model_comparison.columns:
-        st.subheader("F1 Macro Comparison")
-        st.bar_chart(model_comparison.set_index("Model")["F1_Macro"])
-
-    if "F1_Weighted" in model_comparison.columns:
-        st.subheader("F1 Weighted Comparison")
-        st.bar_chart(model_comparison.set_index("Model")["F1_Weighted"])
+    st.subheader("F1 Macro Comparison")
+    st.data_chart(model_display.set_index("Model")["F1_Macro"])
+    
+    st.subheader("F1 Weighted Comparison")
+    st.data_chart(model_display.set_index("Model")["F1_Weighted"])
 
 #========================================================================
 # 3. FAIRNESS ANALYSIS
@@ -155,21 +157,18 @@ elif section == "Fairness Analysis":
 
     st.header("Fairness Analysis")
 
-    st.write(
-        "This section evaluates whether the selected model performs differently "
-        "across gender and age groups."
-    )
+    st.write("This section evaluates whether the selected model performs differently "
+            "across gender and age groups.")
+    
+    gender_display = gender_fairness.copy()
+    age_display = age_fairness.copy()
+
+    for df in [gender_display, age_display]:
+      for col in df.columns[1:]:
+        df[col] = df [col].round(2)
 
     st.subheader("Gender Fairness")
-    st.dataframe(gender_fairness)
-
-    if "F1_Macro" in gender_fairness.columns:
-        st.subheader("Gender Fairness - F1 Macro")
-        st.bar_chart(gender_fairness.set_index("Gender")["F1_Macro"])
+    st.dataframe(gender_display)
 
     st.subheader("Age Fairness")
-    st.dataframe(age_fairness)
-
-    if "F1_Macro" in age_fairness.columns:
-        st.subheader("Age Fairness - F1 Macro")
-        st.bar_chart(age_fairness.set_index("Age_Group")["F1_Macro"])
+    st.dataframe(age_display)
