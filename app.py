@@ -5,7 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from sklearn.inspection import permutation_importance
 
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
@@ -73,10 +72,14 @@ def load_tables():
     age_fairness = pd.read_csv("age_fairness.csv")
     gender_fairness = pd.read_csv("gender_fairness.csv")
 
-    return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees
+    rf_importance = pd.read_csv("rf_importance.csv")
+    lr_importance = pd.read_csv("lr_importance.csv")
+    svm_importance = pd.read_csv("svm_importance.csv")
+
+    return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance
 
 model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
-model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees = load_tables()
+model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
 # Dashboard title
 st.title("Employee Performance Prediction Dashboard")
@@ -277,83 +280,60 @@ else:
     # ================= EXPLAINABILITY =================
     st.subheader("Model Explainability")
 
-    col1, col2, col3 = st.columns(3)
+    # ==================== RF and LR ====================
+    col1, col2 = st.columns(2)
 
-    # ================= RF =================
-    imp = pd.Series(model_RF.feature_importances_, index=model_features).nlargest(6)
+    with col1:
+        fig6, ax6 = plt.subplots(figsize=(4, 2.5))
+        sns.barplot(
+            data=rf_importance,
+            x="Importance",
+            y="Feature",
+            palette="Blues_r")
+        ax6.set_title("Random Forest Importance", color="white", fontsize=10)
+        ax6.set_facecolor("#0B1D2A")
+        fig6.patch.set_facecolor("#0B1D2A")
+        ax6.tick_params(colors="white", labelsize=7)
+        ax6.set_xlabel("Importance", color="white", fontsize=8)
+        ax6.set_ylabel("")
+        plt.tight_layout()
+        st.pyplot(fig6, use_container_width=False)
 
-    fig6, ax6 = plt.subplots(figsize=(5,3))
-    sns.barplot(x=imp.values, y=imp.index, palette="Blues_r")
+    with col2:
+        fig7, ax7 = plt.subplots(figsize=(4, 2.5))
+        sns.barplot(
+            data=lr_importance,
+            x="Importance",
+            y="Feature",
+            palette="light:cyan")
+        ax7.set_title("Logistic Regression Importance", color="white", fontsize=10)
+        ax7.set_facecolor("#0B1D2A")
+        fig7.patch.set_facecolor("#0B1D2A")
+        ax7.tick_params(colors="white", labelsize=7)
+        ax7.set_xlabel("Coefficient", color="white", fontsize=8)
+        ax7.set_ylabel("")
+        plt.tight_layout()
+        st.pyplot(fig7, use_container_width=False)
 
-    ax6.set_title("RF", color="white", fontsize=10)
-    ax6.set_facecolor("#0B1D2A")
-    fig6.patch.set_facecolor("#0B1D2A")
-    ax6.tick_params(colors="white", labelsize=7)
+    # ==================== SVM ====================
+    col3, col4, col5 = st.columns([1, 2, 1])
 
-    col1.pyplot(fig6, use_container_width=False)
-
-
-    # ================= LR =================
-    coef_values = model_MLR.coef_[0]
-    min_len = min(len(coef_values), len(model_features))
-
-    coef = pd.Series(coef_values[:min_len], index=model_features[:min_len])
-    coef = coef.abs().nlargest(6)
-
-    fig7, ax7 = plt.subplots(figsize=(5,3))
-    sns.barplot(x=coef.values, y=coef.index, palette="light:cyan")
-
-    ax7.set_title("LR", color="white", fontsize=10)
-    ax7.set_facecolor("#0B1D2A")
-    fig7.patch.set_facecolor("#0B1D2A")
-    ax7.tick_params(colors="white", labelsize=7)
-
-    col2.pyplot(fig7, use_container_width=False)
-
-
-    # ================= SVM =================
-    employees_model = employees.copy()
-
-    #Crear columnas faltantes
-    for col in model_features:
-        if col not in employees_model.columns:
-            employees_model[col] = 0
-
-    #Mantener solo columnas del modelo
-    employees_model = employees_model[model_features]
-
-    #convertir a numérico
-    employees_model = employees_model.apply(pd.to_numeric, errors='coerce')
-
-    #eliminar NaN
-    employees_model = employees_model.fillna(0)
-
-    #aplicar scaler
-    employees_scaled = scaler.transform(employees_model)
-
-    #Permutation importance
-    perm = permutation_importance(
-        model_SVMC,
-        employees_scaled,
-        model_SVMC.predict(employees_scaled))
-
-    #longitud
-    min_len = min(len(perm.importances_mean), len(model_features))
-
-    svm_imp = pd.Series(
-        perm.importances_mean[:min_len],
-        index=model_features[:min_len]).nlargest(6)
-
-    fig8, ax8 = plt.subplots(figsize=(5,3))
-    sns.barplot(x=svm_imp.values, y=svm_imp.index, palette="mako")
-
-    ax8.set_title("SVM", color="white", fontsize=10)
-    ax8.set_facecolor("#0B1D2A")
-    fig8.patch.set_facecolor("#0B1D2A")
-    ax8.tick_params(colors="white", labelsize=7)
-
-    col3.pyplot(fig8, use_container_width=False)
-
+    with col4:
+        fig8, ax8 = plt.subplots(figsize=(5, 2.8))
+        sns.barplot(
+            data=svm_importance,
+            x="Importance",
+            y="Feature",
+            palette="mako")
+        ax8.set_title("Support Vector Machine Importance", color="white", fontsize=10)
+        ax8.set_facecolor("#0B1D2A")
+        fig8.patch.set_facecolor("#0B1D2A")
+        ax8.tick_params(colors="white", labelsize=7)
+        ax8.set_xlabel("Importance", color="white", fontsize=8)
+        ax8.set_ylabel("")
+        plt.tight_layout()
+        st.pyplot(fig8, use_container_width=False)
+        
     # ================= FAIRNESS =================
     st.subheader("Fairness Analysis")
 

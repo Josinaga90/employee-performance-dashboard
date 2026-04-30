@@ -1,0 +1,7 @@
+Feature,Importance
+DepartmentType_Production       ,0.05479999999999996
+DepartmentType_IT/IS,0.03879999999999996
+DepartmentType_Sales,0.03853333333333331
+RaceDesc_Black,0.03306666666666662
+Tenure,0.032799999999999975
+RaceDesc_Hispanic,0.031733333333333294
