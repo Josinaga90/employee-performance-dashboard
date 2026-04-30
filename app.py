@@ -232,7 +232,7 @@ else:
     # ================= DATA INSIGHTS =================
     st.subheader("Data Insights")
 
-    fig3, ax3 = plt.subplots(figsize=(5,3))
+    fig3, ax3 = plt.subplots(figsize=(4,2.5))
     sns.countplot(data=employees, x="Performance Score", palette="Blues")
     ax3.set_title("Performance Distribution", color="white")
     ax3.set_facecolor("#0B1D2A")
@@ -240,7 +240,7 @@ else:
     ax3.tick_params(colors="white")
     st.pyplot(fig3)
 
-    fig4, ax4 = plt.subplots(figsize=(5,3))
+    fig4, ax4 = plt.subplots(figsize=(4,2.5))
     sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
     ax4.set_title("By Gender", color="white")
     ax4.set_facecolor("#0B1D2A")
@@ -248,7 +248,7 @@ else:
     ax4.tick_params(colors="white")
     st.pyplot(fig4)
 
-    fig5, ax5 = plt.subplots(figsize=(6,3))
+    fig5, ax5 = plt.subplots(figsize=(4,2.5))
     sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
     ax5.set_title("By Department", color="white")
     plt.xticks(rotation=30)
@@ -262,7 +262,7 @@ else:
 
     # RF
     imp = pd.Series(model_RF.feature_importances_, index=model_features).nlargest(6)
-    fig6, ax6 = plt.subplots(figsize=(5,3))
+    fig6, ax6 = plt.subplots(figsize=(4,2.5))
     sns.barplot(x=imp.values, y=imp.index, palette="Blues_r")
     ax6.set_title("Random Forest Importance", color="white")
     ax6.set_facecolor("#0B1D2A")
@@ -271,14 +271,19 @@ else:
     st.pyplot(fig6)
 
     # LR
-    coef = pd.Series(model_MLR.coef_[0], index=model_features).abs().nlargest(6)
-    fig7, ax7 = plt.subplots(figsize=(5,3))
+    coef_values = model_MLR.coef_[0]
+    coef = pd.Series(coef_values, index=model_features[:len(coef_values)])
+    coef = coef.abs().nlargest(6)
+
+    fig7, ax7 = plt.subplots(figsize=(4,2.5))
     sns.barplot(x=coef.values, y=coef.index, palette="light:cyan")
-    ax7.set_title("Logistic Regression Importance", color="white")
+    ax7.set_title("Logistic Regression Importance", color="white", fontsize=10)
     ax7.set_facecolor("#0B1D2A")
     fig7.patch.set_facecolor("#0B1D2A")
-    ax7.tick_params(colors="white")
-    st.pyplot(fig7)
+    ax7.tick_params(colors="white", labelsize=7)
+    plt.tight_layout()
+
+    col2.pyplot(fig7)
 
     # SVM
     perm = permutation_importance(model_SVMC,
@@ -287,7 +292,7 @@ else:
 
     svm_imp = pd.Series(perm.importances_mean, index=model_features).nlargest(6)
 
-    fig8, ax8 = plt.subplots(figsize=(5,3))
+    fig8, ax8 = plt.subplots(figsize=(4,2.5))
     sns.barplot(x=svm_imp.values, y=svm_imp.index, palette="mako")
     ax8.set_title("SVM Importance", color="white")
     ax8.set_facecolor("#0B1D2A")
