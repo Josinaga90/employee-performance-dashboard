@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+from sklearn.inspection import permutation_importance
 
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
@@ -66,15 +67,16 @@ def load_data():
 #Loading result tables
 @st.cache_data
 def load_tables():
+    employees = pd.read_csv("employees_clean.csv")
     model_comparison_MB = pd.read_csv("model_comparison_modelbase.csv")
     model_comparison_tuned = pd.read_csv("model_comparison_modeltuned.csv")
     age_fairness = pd.read_csv("age_fairness.csv")
     gender_fairness = pd.read_csv("gender_fairness.csv")
 
-    return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness
+    return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees
 
 model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
-model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness = load_tables()
+model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees = load_tables()
 
 # Dashboard title
 st.title("Employee Performance Prediction Dashboard")
@@ -201,11 +203,15 @@ else:
         x="Model",
         y="F1_Macro",
         palette="Blues")
+    ax.set_title("F1 Macro Comparison", color="white", fontsize=12, fontweight="bold")
     ax.set_facecolor("#0B1D2A")
     fig.patch.set_facecolor("#0B1D2A")
-    plt.xticks(rotation=20, color="white")
-    plt.yticks(color="white")
-    st.pyplot(fig)
+    ax.tick_params(axis='x', colors='white', labelsize=8)
+    ax.tick_params(axis='y', colors='white', labelsize=8)
+    ax.set_xlabel("Model", color="white")
+    ax.set_ylabel("Score", color="white")
+    
+    col1.pyplot(fig)
 
     # Accuracy
     fig2, ax2 = plt.subplots()
@@ -213,11 +219,82 @@ else:
         x="Model",
         y="Accuracy",
         palette="light:cyan")
+    ax2.set_title("Accuracy Comparison", color="white", fontsize=12, fontweight="bold")
     ax2.set_facecolor("#0B1D2A")
     fig2.patch.set_facecolor("#0B1D2A")
-    plt.xticks(rotation=20, color="white")
-    plt.yticks(color="white")
-    st.pyplot(fig2)
+    ax2.tick_params(axis='x', colors='white', labelsize=8)
+    ax2.tick_params(axis='y', colors='white', labelsize=8)
+    ax2.set_xlabel("Model", color="white")
+    ax2.set_ylabel("Score", color="white")
+
+    col2.pyplot(fig2)
+
+    # ================= DATA INSIGHTS =================
+    st.subheader("Data Insights")
+
+    fig3, ax3 = plt.subplots(figsize=(5,3))
+    sns.countplot(data=employees, x="Performance Score", palette="Blues")
+    ax3.set_title("Performance Distribution", color="white")
+    ax3.set_facecolor("#0B1D2A")
+    fig3.patch.set_facecolor("#0B1D2A")
+    ax3.tick_params(colors="white")
+    st.pyplot(fig3)
+
+    fig4, ax4 = plt.subplots(figsize=(5,3))
+    sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
+    ax4.set_title("By Gender", color="white")
+    ax4.set_facecolor("#0B1D2A")
+    fig4.patch.set_facecolor("#0B1D2A")
+    ax4.tick_params(colors="white")
+    st.pyplot(fig4)
+
+    fig5, ax5 = plt.subplots(figsize=(6,3))
+    sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
+    ax5.set_title("By Department", color="white")
+    plt.xticks(rotation=30)
+    ax5.set_facecolor("#0B1D2A")
+    fig5.patch.set_facecolor("#0B1D2A")
+    ax5.tick_params(colors="white")
+    st.pyplot(fig5)
+
+    # ================= EXPLAINABILITY =================
+    st.subheader("Model Explainability")
+
+    # RF
+    imp = pd.Series(model_RF.feature_importances_, index=model_features).nlargest(6)
+    fig6, ax6 = plt.subplots(figsize=(5,3))
+    sns.barplot(x=imp.values, y=imp.index, palette="Blues_r")
+    ax6.set_title("Random Forest Importance", color="white")
+    ax6.set_facecolor("#0B1D2A")
+    fig6.patch.set_facecolor("#0B1D2A")
+    ax6.tick_params(colors="white")
+    st.pyplot(fig6)
+
+    # LR
+    coef = pd.Series(model_MLR.coef_[0], index=model_features).abs().nlargest(6)
+    fig7, ax7 = plt.subplots(figsize=(5,3))
+    sns.barplot(x=coef.values, y=coef.index, palette="light:cyan")
+    ax7.set_title("Logistic Regression Importance", color="white")
+    ax7.set_facecolor("#0B1D2A")
+    fig7.patch.set_facecolor("#0B1D2A")
+    ax7.tick_params(colors="white")
+    st.pyplot(fig7)
+
+    # SVM
+    perm = permutation_importance(model_SVMC,
+        employees[model_features],
+        model_SVMC.predict(employees[model_features]))
+
+    svm_imp = pd.Series(perm.importances_mean, index=model_features).nlargest(6)
+
+    fig8, ax8 = plt.subplots(figsize=(5,3))
+    sns.barplot(x=svm_imp.values, y=svm_imp.index, palette="mako")
+    ax8.set_title("SVM Importance", color="white")
+    ax8.set_facecolor("#0B1D2A")
+    fig8.patch.set_facecolor("#0B1D2A")
+    ax8.tick_params(colors="white")
+    st.pyplot(fig8)
+
 
     # ================= FAIRNESS =================
     st.subheader("Fairness Analysis")
@@ -229,3 +306,6 @@ else:
 
     col2.write("Age")
     col2.dataframe(age_fairness)
+
+    col1, col2 = st.columns(2)
+
