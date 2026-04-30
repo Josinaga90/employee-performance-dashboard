@@ -197,108 +197,137 @@ else:
     plt.style.use("dark_background")
     sns.set_theme(style="dark")
 
+    col1, col2 = st.columns(2)
+
     # F1 Macro
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(3.5,2))
     sns.barplot(data=model_comparison_tuned,
         x="Model",
         y="F1_Macro",
         palette="Blues")
-    ax.set_title("F1 Macro Comparison", color="white", fontsize=12, fontweight="bold")
+
+    ax.set_title("F1 Macro", color="white", fontsize=10, fontweight="bold")
     ax.set_facecolor("#0B1D2A")
     fig.patch.set_facecolor("#0B1D2A")
-    ax.tick_params(axis='x', colors='white', labelsize=8)
-    ax.tick_params(axis='y', colors='white', labelsize=8)
-    ax.set_xlabel("Model", color="white")
-    ax.set_ylabel("Score", color="white")
-    
-    col1.pyplot(fig)
+    ax.tick_params(axis='x', colors='white', labelsize=7)
+    ax.tick_params(axis='y', colors='white', labelsize=7)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+
+    col1.pyplot(fig, use_container_width=False)
 
     # Accuracy
-    fig2, ax2 = plt.subplots()
+    fig2, ax2 = plt.subplots(figsize=(3.5,2))
     sns.barplot(data=model_comparison_tuned,
         x="Model",
         y="Accuracy",
         palette="light:cyan")
-    ax2.set_title("Accuracy Comparison", color="white", fontsize=12, fontweight="bold")
+
+    ax2.set_title("Accuracy", color="white", fontsize=10, fontweight="bold")
     ax2.set_facecolor("#0B1D2A")
     fig2.patch.set_facecolor("#0B1D2A")
-    ax2.tick_params(axis='x', colors='white', labelsize=8)
-    ax2.tick_params(axis='y', colors='white', labelsize=8)
-    ax2.set_xlabel("Model", color="white")
-    ax2.set_ylabel("Score", color="white")
+    ax2.tick_params(axis='x', colors='white', labelsize=7)
+    ax2.tick_params(axis='y', colors='white', labelsize=7)
+    ax2.set_xlabel("")
+    ax2.set_ylabel("")
 
-    col2.pyplot(fig2)
+    col2.pyplot(fig2, use_container_width=False)
+
 
     # ================= DATA INSIGHTS =================
     st.subheader("Data Insights")
 
-    fig3, ax3 = plt.subplots(figsize=(4,2.5))
+    col1, col2 = st.columns(2)
+
+    # Distribution
+    fig3, ax3 = plt.subplots(figsize=(3.5,2))
     sns.countplot(data=employees, x="Performance Score", palette="Blues")
-    ax3.set_title("Performance Distribution", color="white")
+
+    ax3.set_title("Performance", color="white", fontsize=10)
     ax3.set_facecolor("#0B1D2A")
     fig3.patch.set_facecolor("#0B1D2A")
-    ax3.tick_params(colors="white")
-    st.pyplot(fig3)
+    ax3.tick_params(colors="white", labelsize=7)
 
-    fig4, ax4 = plt.subplots(figsize=(4,2.5))
+    col1.pyplot(fig3, use_container_width=False)
+
+    # Gender
+    fig4, ax4 = plt.subplots(figsize=(3.5,2))
     sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
-    ax4.set_title("By Gender", color="white")
+
+    ax4.set_title("By Gender", color="white", fontsize=10)
     ax4.set_facecolor("#0B1D2A")
     fig4.patch.set_facecolor("#0B1D2A")
-    ax4.tick_params(colors="white")
-    st.pyplot(fig4)
+    ax4.tick_params(colors="white", labelsize=7)
 
-    fig5, ax5 = plt.subplots(figsize=(4,2.5))
+    col2.pyplot(fig4, use_container_width=False)
+
+    # Department (full width abajo)
+    fig5, ax5 = plt.subplots(figsize=(5,2))
     sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
-    ax5.set_title("By Department", color="white")
-    plt.xticks(rotation=30)
+
+    ax5.set_title("By Department", color="white", fontsize=10)
     ax5.set_facecolor("#0B1D2A")
     fig5.patch.set_facecolor("#0B1D2A")
-    ax5.tick_params(colors="white")
-    st.pyplot(fig5)
+    ax5.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
+
+    st.pyplot(fig5, use_container_width=False)
+
 
     # ================= EXPLAINABILITY =================
     st.subheader("Model Explainability")
 
+    col1, col2, col3 = st.columns(3)
+
     # RF
     imp = pd.Series(model_RF.feature_importances_, index=model_features).nlargest(6)
-    fig6, ax6 = plt.subplots(figsize=(4,2.5))
+
+    fig6, ax6 = plt.subplots(figsize=(3,2))
     sns.barplot(x=imp.values, y=imp.index, palette="Blues_r")
-    ax6.set_title("Random Forest Importance", color="white")
+
+    ax6.set_title("RF", color="white", fontsize=10)
     ax6.set_facecolor("#0B1D2A")
     fig6.patch.set_facecolor("#0B1D2A")
-    ax6.tick_params(colors="white")
-    st.pyplot(fig6)
+    ax6.tick_params(colors="white", labelsize=7)
 
-    # LR
+    col1.pyplot(fig6, use_container_width=False)
+
+
+    # LR (FIX ERROR)
     coef_values = model_MLR.coef_[0]
-    coef = pd.Series(coef_values, index=model_features[:len(coef_values)])
+    min_len = min(len(coef_values), len(model_features))
+
+    coef = pd.Series(coef_values[:min_len], index=model_features[:min_len])
     coef = coef.abs().nlargest(6)
 
-    fig7, ax7 = plt.subplots(figsize=(4,2.5))
+    fig7, ax7 = plt.subplots(figsize=(3,2))
     sns.barplot(x=coef.values, y=coef.index, palette="light:cyan")
-    ax7.set_title("Logistic Regression Importance", color="white", fontsize=10)
+
+    ax7.set_title("LR", color="white", fontsize=10)
     ax7.set_facecolor("#0B1D2A")
     fig7.patch.set_facecolor("#0B1D2A")
     ax7.tick_params(colors="white", labelsize=7)
-    plt.tight_layout()
 
-    col2.pyplot(fig7)
+    col2.pyplot(fig7, use_container_width=False)
+
 
     # SVM
-    perm = permutation_importance(model_SVMC,
+    perm = permutation_importance(
+        model_SVMC,
         employees[model_features],
         model_SVMC.predict(employees[model_features]))
 
     svm_imp = pd.Series(perm.importances_mean, index=model_features).nlargest(6)
 
-    fig8, ax8 = plt.subplots(figsize=(4,2.5))
+    fig8, ax8 = plt.subplots(figsize=(3,2))
     sns.barplot(x=svm_imp.values, y=svm_imp.index, palette="mako")
-    ax8.set_title("SVM Importance", color="white")
+
+    ax8.set_title("SVM", color="white", fontsize=10)
     ax8.set_facecolor("#0B1D2A")
     fig8.patch.set_facecolor("#0B1D2A")
-    ax8.tick_params(colors="white")
-    st.pyplot(fig8)
+    ax8.tick_params(colors="white", labelsize=7)
+
+    col3.pyplot(fig8, use_container_width=False)
 
 
     # ================= FAIRNESS =================
@@ -311,6 +340,3 @@ else:
 
     col2.write("Age")
     col2.dataframe(age_fairness)
-
-    col1, col2 = st.columns(2)
-
