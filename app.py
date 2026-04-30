@@ -166,18 +166,17 @@ else:
     # ================= KPI =================
     st.subheader("Key Metrics")
 
-    if "F1_Macro" in model_comparison_tuned.columns:
-        best_macro = model_comparison_tuned.loc[model_comparison_tuned["F1_Macro"].idxmax()]
-    if "F1_Weighted" in model_comparison_tuned.columns:
-        best_weighted = model_comparison_tuned.loc[model_comparison_tuned["F1_Weighted"].idxmax()]
-    if "Accuracy" in model_comparison_tuned.columns:
-        best_acc = model_comparison_tuned.loc[model_comparison_tuned["Accuracy"].idxmax()]
-
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Best Macro", best_macro["Model"], f"{best_macro['F1_Macro']:.2%}")
-    col2.metric("Best Weighted", best_weighted["Model"], f"{best_weighted['F1_Weighted']:.2%}")
-    col3.metric("Best Accuracy", best_acc["Model"], f"{best_acc['Accuracy']:.2%}")
+    if "F1_Macro" in model_comparison_tuned.columns:
+        best_macro = model_comparison_tuned.loc[model_comparison_tuned["F1_Macro"].idxmax()]
+        col1.metric("Best Macro", best_macro["Model"], f"{best_macro['F1_Macro']:.2%}")
+    if "F1_Weighted" in model_comparison_tuned.columns:
+        best_weighted = model_comparison_tuned.loc[model_comparison_tuned["F1_Weighted"].idxmax()]
+        col2.metric("Best Weighted", best_weighted["Model"], f"{best_weighted['F1_Weighted']:.2%}")
+    if "Accuracy" in model_comparison_tuned.columns:
+        best_acc = model_comparison_tuned.loc[model_comparison_tuned["Accuracy"].idxmax()]
+        col3.metric("Best Accuracy", best_acc["Model"], f"{best_acc['Accuracy']:.2%}")
 
     # ================= TABLES =================
     st.subheader("Model Comparison")
@@ -185,10 +184,10 @@ else:
     col1, col2 = st.columns(2)
 
     col1.write("Base Models")
-    col1.dataframe(model_comparison_MB.style.format("{:.2%}"))
+    col1.dataframe(model_comparison_MB.round(4))
 
     col2.write("Tuned Models")
-    col2.dataframe(model_comparison_tuned.style.format("{:.2%}"))
+    col2.dataframe(model_comparison_tuned.round(4))
 
     # ================= GRAPHS =================
     st.subheader("Performance Comparison")
