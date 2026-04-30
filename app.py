@@ -279,7 +279,7 @@ else:
 
     col1, col2, col3 = st.columns(3)
 
-    # RF
+    # ================= RF =================
     imp = pd.Series(model_RF.feature_importances_, index=model_features).nlargest(6)
 
     fig6, ax6 = plt.subplots(figsize=(3,2))
@@ -293,7 +293,7 @@ else:
     col1.pyplot(fig6, use_container_width=False)
 
 
-    # LR (FIX ERROR)
+    # ================= LR =================
     coef_values = model_MLR.coef_[0]
     min_len = min(len(coef_values), len(model_features))
 
@@ -311,13 +311,32 @@ else:
     col2.pyplot(fig7, use_container_width=False)
 
 
-    # SVM
+    # ================= SVM =================
+    employees_model = employees.copy()
+
+    # Crear columnas faltantes
+    for col in model_features:
+        if col not in employees_model.columns:
+            employees_model[col] = 0
+
+    # Mantener solo columnas del modelo
+    employees_model = employees_model[model_features]
+
+    # Aplicar scaler
+    employees_scaled = scaler.transform(employees_model)
+
+    # Permutation importance
     perm = permutation_importance(
         model_SVMC,
-        employees[model_features],
-        model_SVMC.predict(employees[model_features]))
+        employees_scaled,
+        model_SVMC.predict(employees_scaled))
 
-    svm_imp = pd.Series(perm.importances_mean, index=model_features).nlargest(6)
+    # FIX longitud
+    min_len = min(len(perm.importances_mean), len(model_features))
+
+    svm_imp = pd.Series(
+        perm.importances_mean[:min_len],
+        index=model_features[:min_len]).nlargest(6)
 
     fig8, ax8 = plt.subplots(figsize=(3,2))
     sns.barplot(x=svm_imp.values, y=svm_imp.index, palette="mako")
@@ -328,7 +347,6 @@ else:
     ax8.tick_params(colors="white", labelsize=7)
 
     col3.pyplot(fig8, use_container_width=False)
-
 
     # ================= FAIRNESS =================
     st.subheader("Fairness Analysis")
