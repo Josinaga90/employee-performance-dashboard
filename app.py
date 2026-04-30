@@ -6,6 +6,46 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+#Setting Colour
+st.markdown("""
+<style>
+
+/* Fondo principal */
+.stApp {background-color: #0B1D2A;}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {background-color: #081520;}
+
+/* Títulos */
+h1, h2, h3 {color: #E6F7FF;}
+
+/* Cards tipo dashboard */
+div[data-testid="stMetric"] {
+    background-color: #132F44;
+    padding: 15px;
+    border-radius: 10px;}
+
+/* Botones */
+.stButton>button {
+    background-color: #00C2D1;
+    color: white;
+    border-radius: 8px;}
+
+/* Hover botones */
+.stButton>button:hover {background-color: #00A6B5;}
+
+/* Dataframe */
+.css-1d391kg {background-color: #132F44;}
+
+/* Labels */
+label {color: #E6F7FF;}
+
+/* Texto general */
+body {color: white;}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
 # ================================
@@ -24,7 +64,8 @@ def load_data():
 #Loading result tables
 @st.cache_data
 def load_tables():
-    model_comparison = pd.read_csv("model_comparison.csv")
+    model_comparison_MB = pd.read_csv("model_comparison_modelbase.csv")
+    model_comparison_tuned = pd.read_csv("model_comparison_modeltuned.csv")
     age_fairness = pd.read_csv("age_fairness.csv")
     gender_fairness = pd.read_csv("gender_fairness.csv")
     return model_comparison, age_fairness, gender_fairness
@@ -116,54 +157,55 @@ if section == "Individual Prediction":
         st.subheader("Prediction Result")
         st.success("Predicted Performance: " + performance_labels[prediction])
 
-#========================================================================
-# 2. MODEL COMPARISON
-#========================================================================
+# =========================================================
+# 2. DASHBOARD
+# =========================================================
+else:
 
-elif section == "Model Comparison":
+    st.title("📊 Performance Dashboard")
 
-    st.header("Model Comparison")
+    # ================= KPI =================
+    st.subheader("Key Metrics")
 
-    st.write("This section compares the performance of Random Forest, "
-        "Logistic Regression, and Support Vector Machine.")
-    
-    model_display = model_comparison.copy()
+    best_macro = model_comparison_tuned.loc[model_comparison_tuned["F1_Macro"].idxmax()]
+    best_weighted = model_comparison_tuned.loc[model_comparison_tuned["F1_Weighted"].idxmax()]
+    best_acc = model_comparison_tuned.loc[model_comparison_tuned["Accuracy"].idxmax()]
 
-    for col in model_display.columns[1:]:
-      model_display[col] = (model_display[col]*100).round(2)
+    col1, col2, col3 = st.columns(3)
 
-    st.subheader("Model Performance Table")
-    st.dataframe(model_display)
+    col1.metric("Best Model (Macro)", best_macro["Model"], f"{best_macro['F1_Macro']:.2%}")
+    col2.metric("Best Model (Weighted)", best_weighted["Model"], f"{best_weighted['F1_Weighted']:.2%}")
+    col3.metric("Best Accuracy", best_acc["Model"], f"{best_acc['Accuracy']:.2%}")
 
-    st.subheader("Accuracy Comparison")
-    st.data_chart(model_display.set_index("Model")["Accuracy"])
+    # ================= TABLES =================
+    st.subheader("Model Comparison")
 
-    st.subheader("F1 Macro Comparison")
-    st.data_chart(model_display.set_index("Model")["F1_Macro"])
-    
-    st.subheader("F1 Weighted Comparison")
-    st.data_chart(model_display.set_index("Model")["F1_Weighted"])
+    col1, col2 = st.columns(2)
+    col1.write("Base Models")
+    col1.dataframe(model_comparison_MB)
 
-#========================================================================
-# 3. FAIRNESS ANALYSIS
-#========================================================================
+    col2.write("Tuned Models")
+    col2.dataframe(model_comparison_MB)
 
-elif section == "Fairness Analysis":
+    # ================= CHARTS =================
+    st.subheader("Performance Comparison")
 
-    st.header("Fairness Analysis")
+    fig, ax = plt.subplots()
+    sns.barplot(data=model_comparison_tuned, x="Model", y="F1_Macro", palette="Blues")
+    plt.xticks(rotation=20)
+    st.pyplot(fig)
 
-    st.write("This section evaluates whether the selected model performs differently "
-            "across gender and age groups.")
-    
-    gender_display = gender_fairness.copy()
-    age_display = age_fairness.copy()
+    fig2, ax2 = plt.subplots()
+    sns.barplot(data=model_comparison_tuned, x="Model", y="Accuracy", palette="light:cyan")
+    plt.xticks(rotation=20)
+    st.pyplot(fig2)
 
-    for df in [gender_display, age_display]:
-      for col in df.columns[1:]:
-        df[col] = df [col].round(2)
+    # ================= FAIRNESS =================
+    st.subheader("Fairness Analysis")
 
-    st.subheader("Gender Fairness")
-    st.dataframe(gender_display)
+    col1, col2 = st.columns(2)
+    col1.write("Gender")
+    col1.dataframe(gender_fairness)
 
-    st.subheader("Age Fairness")
-    st.dataframe(age_display)
+    col2.write("Age")
+    col2.dataframe(age_fairness)
