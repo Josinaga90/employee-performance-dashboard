@@ -282,7 +282,7 @@ else:
     # ================= RF =================
     imp = pd.Series(model_RF.feature_importances_, index=model_features).nlargest(6)
 
-    fig6, ax6 = plt.subplots(figsize=(3,2))
+    fig6, ax6 = plt.subplots(figsize=(5,3))
     sns.barplot(x=imp.values, y=imp.index, palette="Blues_r")
 
     ax6.set_title("RF", color="white", fontsize=10)
@@ -300,7 +300,7 @@ else:
     coef = pd.Series(coef_values[:min_len], index=model_features[:min_len])
     coef = coef.abs().nlargest(6)
 
-    fig7, ax7 = plt.subplots(figsize=(3,2))
+    fig7, ax7 = plt.subplots(figsize=(5,3))
     sns.barplot(x=coef.values, y=coef.index, palette="light:cyan")
 
     ax7.set_title("LR", color="white", fontsize=10)
@@ -314,31 +314,37 @@ else:
     # ================= SVM =================
     employees_model = employees.copy()
 
-    # Crear columnas faltantes
+    #Crear columnas faltantes
     for col in model_features:
         if col not in employees_model.columns:
             employees_model[col] = 0
 
-    # Mantener solo columnas del modelo
+    #Mantener solo columnas del modelo
     employees_model = employees_model[model_features]
 
-    # Aplicar scaler
+    #convertir a numérico
+    employees_model = employees_model.apply(pd.to_numeric, errors='coerce')
+
+    #eliminar NaN
+    employees_model = employees_model.fillna(0)
+
+    #aplicar scaler
     employees_scaled = scaler.transform(employees_model)
 
-    # Permutation importance
+    #Permutation importance
     perm = permutation_importance(
         model_SVMC,
         employees_scaled,
         model_SVMC.predict(employees_scaled))
 
-    # FIX longitud
+    #longitud
     min_len = min(len(perm.importances_mean), len(model_features))
 
     svm_imp = pd.Series(
         perm.importances_mean[:min_len],
         index=model_features[:min_len]).nlargest(6)
 
-    fig8, ax8 = plt.subplots(figsize=(3,2))
+    fig8, ax8 = plt.subplots(figsize=(5,3))
     sns.barplot(x=svm_imp.values, y=svm_imp.index, palette="mako")
 
     ax8.set_title("SVM", color="white", fontsize=10)
