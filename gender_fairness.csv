@@ -1,3 +1,3 @@
-Gender,Accuracy,F1_Macro
-Male,65.33,30.15
-Female,62.53,26.96
+Gender,Accuracy,F1_Macro,Precision_Macro,Recall_Macro
+Male,59.13,27.61,27.87,30.17
+Female,59.95,29.81,30.76,32.43
