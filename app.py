@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
+
 #Setting Colour
 st.markdown("""
 <style>
@@ -46,7 +48,7 @@ body {color: white;}
 </style>
 """, unsafe_allow_html=True)
 
-st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
+
 
 # ================================
 # LOAD MODELS
@@ -68,10 +70,11 @@ def load_tables():
     model_comparison_tuned = pd.read_csv("model_comparison_modeltuned.csv")
     age_fairness = pd.read_csv("age_fairness.csv")
     gender_fairness = pd.read_csv("gender_fairness.csv")
-    return model_comparison, age_fairness, gender_fairness
+
+    return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness
 
 model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
-model_comparison, age_fairness, gender_fairness = load_tables()
+model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness = load_tables()
 
 # Dashboard title
 st.title("Employee Performance Prediction Dashboard")
@@ -82,7 +85,7 @@ st.write("This dashboard presents individual employee performance prediction, "
 #Sidebar: Create interactive inputs for the HR Manager
 section = st.sidebar.selectbox(
     "Select Section",
-    ["Individual Prediction", "Model Comparison", "Fairness Analysis"])
+    ["Individual Prediction", "Dashboard"])
 
 #========================================================================
 # 1. INDIVIDUAL PREDICTION
@@ -95,16 +98,12 @@ if section == "Individual Prediction":
     selected_model = st.selectbox("Select Model",
         ["Random Forest", "Logistic Regression", "Support Vector Machine"])
 
-    age = st.number_input("Age", min_value=18, max_value=70, value=35)
-    
+    age = st.number_input("Age", min_value=18, max_value=70, value=35)    
     tenure = st.number_input("Tenure (days in company)", min_value=0, value=1000)
     
     gender = st.selectbox("Gender", ["Male", "Female"])
-
     race = st.selectbox("Race", ["White", "Black", "Hispanic", "Asian", "Other"])
-
     department = st.selectbox("Department Type", ["Production", "Sales", "Admin Offices", "IT/IS", "Executive Office"])
-
     payzone = st.selectbox("Pay Zone", ["Zone A", "Zone B", "Zone C"])
 
     # Creatinginput data with the same columns used in training
@@ -162,48 +161,70 @@ if section == "Individual Prediction":
 # =========================================================
 else:
 
-    st.title("📊 Performance Dashboard")
+    st.title("Performance Dashboard")
 
     # ================= KPI =================
     st.subheader("Key Metrics")
 
-    best_macro = model_comparison_tuned.loc[model_comparison_tuned["F1_Macro"].idxmax()]
-    best_weighted = model_comparison_tuned.loc[model_comparison_tuned["F1_Weighted"].idxmax()]
-    best_acc = model_comparison_tuned.loc[model_comparison_tuned["Accuracy"].idxmax()]
+    if "F1_Macro" in model_comparison_tuned.columns:
+        best_macro = model_comparison_tuned.loc[model_comparison_tuned["F1_Macro"].idxmax()]
+    if "F1_Weighted" in model_comparison_tuned.columns:
+        best_weighted = model_comparison_tuned.loc[model_comparison_tuned["F1_Weighted"].idxmax()]
+    if "Accuracy" in model_comparison_tuned.columns:
+        best_acc = model_comparison_tuned.loc[model_comparison_tuned["Accuracy"].idxmax()]
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Best Model (Macro)", best_macro["Model"], f"{best_macro['F1_Macro']:.2%}")
-    col2.metric("Best Model (Weighted)", best_weighted["Model"], f"{best_weighted['F1_Weighted']:.2%}")
+    col1.metric("Best Macro", best_macro["Model"], f"{best_macro['F1_Macro']:.2%}")
+    col2.metric("Best Weighted", best_weighted["Model"], f"{best_weighted['F1_Weighted']:.2%}")
     col3.metric("Best Accuracy", best_acc["Model"], f"{best_acc['Accuracy']:.2%}")
 
     # ================= TABLES =================
     st.subheader("Model Comparison")
 
     col1, col2 = st.columns(2)
+
     col1.write("Base Models")
-    col1.dataframe(model_comparison_MB)
+    col1.dataframe(model_comparison_MB.style.format("{:.2%}"))
 
     col2.write("Tuned Models")
-    col2.dataframe(model_comparison_MB)
+    col2.dataframe(model_comparison_tuned.style.format("{:.2%}"))
 
-    # ================= CHARTS =================
+    # ================= GRAPHS =================
     st.subheader("Performance Comparison")
 
+    plt.style.use("dark_background")
+    sns.set_theme(style="dark")
+
+    # F1 Macro
     fig, ax = plt.subplots()
-    sns.barplot(data=model_comparison_tuned, x="Model", y="F1_Macro", palette="Blues")
-    plt.xticks(rotation=20)
+    sns.barplot(data=model_comparison_tuned,
+        x="Model",
+        y="F1_Macro",
+        palette="Blues")
+    ax.set_facecolor("#0B1D2A")
+    fig.patch.set_facecolor("#0B1D2A")
+    plt.xticks(rotation=20, color="white")
+    plt.yticks(color="white")
     st.pyplot(fig)
 
+    # Accuracy
     fig2, ax2 = plt.subplots()
-    sns.barplot(data=model_comparison_tuned, x="Model", y="Accuracy", palette="light:cyan")
-    plt.xticks(rotation=20)
+    sns.barplot(data=model_comparison_tuned,
+        x="Model",
+        y="Accuracy",
+        palette="light:cyan")
+    ax2.set_facecolor("#0B1D2A")
+    fig2.patch.set_facecolor("#0B1D2A")
+    plt.xticks(rotation=20, color="white")
+    plt.yticks(color="white")
     st.pyplot(fig2)
 
     # ================= FAIRNESS =================
     st.subheader("Fairness Analysis")
 
     col1, col2 = st.columns(2)
+
     col1.write("Gender")
     col1.dataframe(gender_fairness)
 
