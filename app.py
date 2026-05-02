@@ -103,9 +103,9 @@ if section == "Individual Prediction":
     selected_model = st.selectbox("Select Model",
         ["Random Forest", "Logistic Regression", "Support Vector Machine"])
 
-    age = st.number_input("Age", min_value=18, max_value=70, value=35)    
+    age = st.number_input("Age", min_value=18, max_value=70, value=35)
     tenure = st.number_input("Tenure (days in company)", min_value=0, value=1000)
-    
+
     gender = st.selectbox("Gender", ["Male", "Female"])
     race = st.selectbox("Race", ["White", "Black", "Hispanic", "Asian", "Other"])
     department = st.selectbox("Department Type", ["Production", "Sales", "Admin Offices", "IT/IS", "Executive Office"])
@@ -117,7 +117,7 @@ if section == "Individual Prediction":
     # Fill numeric variables
     if "Age" in input_data.columns:
         input_data["Age"] = age
-        
+
     if "Tenure" in input_data.columns:
         input_data["Tenure"] = tenure
 
@@ -250,6 +250,7 @@ else:
     ax3.set_facecolor("#0B1D2A")
     fig3.patch.set_facecolor("#0B1D2A")
     ax3.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
 
     col1.pyplot(fig3, use_container_width=False)
 
@@ -261,11 +262,12 @@ else:
     ax4.set_facecolor("#0B1D2A")
     fig4.patch.set_facecolor("#0B1D2A")
     ax4.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
 
     col2.pyplot(fig4, use_container_width=False)
 
     # Department (full width abajo)
-    fig5, ax5 = plt.subplots(figsize=(5,2))
+    fig5, ax5 = plt.subplots(figsize=(5, 3.5))
     sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
 
     ax5.set_title("By Department", color="white", fontsize=10)
@@ -333,7 +335,7 @@ else:
         ax8.set_ylabel("")
         plt.tight_layout()
         st.pyplot(fig8, use_container_width=False)
-        
+
     # ================= FAIRNESS =================
     st.subheader("Fairness Analysis")
 
