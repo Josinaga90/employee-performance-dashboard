@@ -80,13 +80,6 @@ def load_tables():
     return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance
 
 model_RF, model_LR, model_SVMC, scaler, model_features = load_data()
-
-st.write("RF expected features:", model_RF.n_features_in_)
-st.write("LR expected features:", model_LR.n_features_in_)
-st.write("SVM expected features:", model_SVMC.n_features_in_)
-st.write("Scaler expected features:", scaler.n_features_in_)
-st.write("model_features length:", len(model_features))
-
 model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
 # Dashboard title
