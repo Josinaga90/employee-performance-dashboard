@@ -168,7 +168,7 @@ else:
 
     st.title("Performance Dashboard")
 
-    # ================= KPI =================
+# ================= KPI =================
     st.subheader("Key Metrics")
 
     col1, col2, col3 = st.columns(3)
@@ -187,14 +187,14 @@ else:
 
     st.divider()
 
-    # ================= DATA INSIGHTS =================
+# ================= DATA INSIGHTS =================
     st.subheader("Data Insights")
 
     col1, col2 = st.columns(2)
 
     # Distribution
     fig3, ax3 = plt.subplots(figsize=(3.5,2))
-    sns.countplot(data=employees, x="Performance Score", palette="Blues")
+    sns.countplot(data=employees, x="PerformanceScore", palette="Blues")
     ax3.set_title("Performance", color="white", fontsize=10)
     ax3.set_facecolor("#0B1D2A")
     fig3.patch.set_facecolor("#0B1D2A")
@@ -204,7 +204,7 @@ else:
 
     # Gender
     fig4, ax4 = plt.subplots(figsize=(3.5,2))
-    sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
+    sns.countplot(data=employees, x="PerformanceScore", hue="GenderCode")
     ax4.set_title("By Gender", color="white", fontsize=10)
     ax4.set_facecolor("#0B1D2A")
     fig4.patch.set_facecolor("#0B1D2A")
@@ -212,9 +212,9 @@ else:
     plt.xticks(rotation=30)
     col2.pyplot(fig4, use_container_width=False)
 
-    # Department (full width)
+    # Department
     fig5, ax5 = plt.subplots(figsize=(5,2.5))
-    sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
+    sns.countplot(data=employees, x="DepartmentType", hue="PerformanceScore")
     ax5.set_title("By Department", color="white", fontsize=10)
     ax5.set_facecolor("#0B1D2A")
     fig5.patch.set_facecolor("#0B1D2A")
@@ -222,9 +222,7 @@ else:
     plt.xticks(rotation=30)
     st.pyplot(fig5, use_container_width=False)
 
-    st.divider()
-
-    # ================= MODEL COMPARISON =================
+# ================= MODEL COMPARISON =================
     st.subheader("Model Comparison")
 
     col1, col2 = st.columns(2)
@@ -237,7 +235,7 @@ else:
 
     st.divider()
 
-    # ================= PERFORMANCE GRAPHS =================
+# ================= PERFORMANCE GRAPHS =================
     st.subheader("Performance Comparison")
 
     col1, col2 = st.columns(2)
@@ -262,7 +260,7 @@ else:
 
     st.divider()
 
-    # ================= EXPLAINABILITY =================
+# ================= EXPLAINABILITY =================
     st.subheader("Model Explainability")
 
     col1, col2 = st.columns(2)
@@ -301,7 +299,7 @@ else:
 
     st.divider()
 
-    # ================= FAIRNESS =================
+# ================= FAIRNESS =================
     st.subheader("Fairness Analysis")
 
     col1, col2 = st.columns(2)
