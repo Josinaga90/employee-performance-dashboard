@@ -108,7 +108,7 @@ if section == "Individual Prediction":
 
     gender = st.selectbox("Gender", ["Male", "Female"])
     race = st.selectbox("Race", ["White", "Black", "Hispanic", "Asian", "Other"])
-    department = st.selectbox("Department Type", ["Production", "Sales", "Admin Offices", "IT/IS", "Executive Office"])
+    department = st.selectbox("Department Type", ["Production", "Sales", "IT/IS", "Executive Office", "Software Engineering"])
     payzone = st.selectbox("Pay Zone", ["Zone A", "Zone B", "Zone C"])
 
     # Creatinginput data with the same columns used in training
