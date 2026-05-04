@@ -57,7 +57,7 @@ body {color: white;}
 @st.cache_resource
 def load_data():
     model_RF = joblib.load("model_RF.pkl")
-    model_MLR = joblib.load("model_LR.pkl")
+    model_LR = joblib.load("model_LR.pkl")
     model_SVMC = joblib.load("model_SVMC.pkl")
     scaler = joblib.load("scaler.pkl")
     model_features = joblib.load("model_features.pkl")
@@ -148,13 +148,6 @@ if section == "Individual Prediction":
 
     input_data = input_data[model_features]
 
-    st.write("DEBUG columnas:", input_data.columns)
-    st.write("DEBUG len features:", len(model_features))
-    st.write("DEBUG shape:", input_data.shape)
-
-
-    input_data = input_data.reindex(columns=model_features, fill_value=0)
-
     if st.button("Predict Performance"):        
 
         if selected_model == "Random Forest":
@@ -167,8 +160,15 @@ if section == "Individual Prediction":
         elif selected_model == "Support Vector Machine":
             input_scaled = scaler.transform(input_data)
             prediction = model_SVMC.predict(input_scaled)[0]
-        
-        st.write("Shape input:", input_data.shape)
+
+        performance_labels = {
+            0: "PIP",
+            1: "Needs Improvement",
+            2: "Fully Meets",
+            3: "Exceeds"}
+
+        st.subheader("Prediction Result")
+        st.success("Predicted Performance: " + performance_labels[prediction])
 
 # =========================================================
 # 2. DASHBOARD
