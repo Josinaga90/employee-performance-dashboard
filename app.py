@@ -62,7 +62,7 @@ def load_data():
     scaler = joblib.load("scaler.pkl")
     model_features = joblib.load("model_features.pkl")
 
-    return model_RF, model_MLR, model_SVMC, scaler, list(model_features)
+    return model_RF, model_LR, model_SVMC, scaler, list(model_features)
 
 #Loading result tables
 @st.cache_data
@@ -79,10 +79,10 @@ def load_tables():
 
     return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance
 
-model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
+model_RF, model_LR, model_SVMC, scaler, model_features = load_data()
 
 st.write("RF expected features:", model_RF.n_features_in_)
-st.write("LR expected features:", model_MLR.n_features_in_)
+st.write("LR expected features:", model_LR.n_features_in_)
 st.write("SVM expected features:", model_SVMC.n_features_in_)
 st.write("Scaler expected features:", scaler.n_features_in_)
 st.write("model_features length:", len(model_features))
@@ -155,7 +155,7 @@ if section == "Individual Prediction":
 
         elif selected_model == "Logistic Regression":
             input_scaled = scaler.transform(input_data)
-            prediction = model_MLR.predict(input_scaled)[0]
+            prediction = model_LR.predict(input_scaled)[0]
 
         elif selected_model == "Support Vector Machine":
             input_scaled = scaler.transform(input_data)
