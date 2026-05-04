@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+st.cache_resource.clear()
+st.cache_data.clear()
+
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
 #Setting Colour
