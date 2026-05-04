@@ -141,26 +141,28 @@ if section == "Individual Prediction":
     input_data = input_data[model_features]
 
     if st.button("Predict Performance"):
+       st.write("DEBUG 👇")
        st.write(input_data)
 
-        if selected_model == "Random Forest":
-            prediction = model_RF.predict(input_data)[0]
 
-        elif selected_model == "Logistic Regression":
-            input_scaled = scaler.transform(input_data)
-            prediction = model_MLR.predict(input_scaled)[0]
+       if selected_model == "Random Forest":
+           prediction = model_RF.predict(input_data)[0]
 
-        else:
-            prediction = model_SVMC.predict(scaler.transform(input_data))[0]
+       elif selected_model == "Logistic Regression":
+           input_scaled = scaler.transform(input_data)
+           prediction = model_MLR.predict(input_scaled)[0]
 
-        performance_labels = {
-            0: "PIP",
-            1: "Needs Improvement",
-            2: "Fully Meets",
-            3: "Exceeds"}
+       else:
+           prediction = model_SVMC.predict(scaler.transform(input_data))[0]
 
-        st.subheader("Prediction Result")
-        st.success("Predicted Performance: " + performance_labels[prediction])
+       performance_labels = {
+           0: "PIP",
+           1: "Needs Improvement",
+           2: "Fully Meets",
+           3: "Exceeds"}
+
+       st.subheader("Prediction Result")
+       st.success("Predicted Performance: " + performance_labels[prediction])
 
 # =========================================================
 # 2. DASHBOARD
