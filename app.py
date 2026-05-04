@@ -214,41 +214,50 @@ else:
 # ================= GRAPHS =================
     col1, col2 = st.columns(2)
 
-    # Distribution
-    fig, ax = plt.subplots(figsize=(3.5,2))
-    sns.countplot(data=employees, x="Performance Score", palette="Blues")
+    # Performance Distribution
+    fig, ax = plt.subplots(figsize=(3.5, 2))
+    sns.countplot(data=eda, x="Performance", palette="Blues", ax=ax3)
 
-    ax.set_title("Performance", color="white", fontsize=10)
+    ax.set_title("Performance Distribution", color="white", fontsize=10)
     ax.set_facecolor("#0B1D2A")
     fig.patch.set_facecolor("#0B1D2A")
     ax.tick_params(colors="white", labelsize=7)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
     plt.xticks(rotation=30)
+    plt.tight_layout()
 
     col1.pyplot(fig, use_container_width=False)
 
-    # Gender
-    fig2, ax2 = plt.subplots(figsize=(3.5,2))
-    sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
+    # Performance by Gender
+    fig1, ax1 = plt.subplots(figsize=(3.5, 2))
+    sns.countplot(data=eda, x="Performance", hue="Gender", ax=ax4)
 
-    ax2.set_title("By Gender", color="white", fontsize=10)
+    ax1.set_title("Performance by Gender", color="white", fontsize=10)
+    ax1.set_facecolor("#0B1D2A")
+    fig1.patch.set_facecolor("#0B1D2A")
+    ax1.tick_params(colors="white", labelsize=7)
+    ax1.set_xlabel("")
+    ax1.set_ylabel("")
+    plt.xticks(rotation=30)
+    plt.tight_layout()
+
+    col2.pyplot(fig1, use_container_width=False)
+
+    # Performance by Department
+    fig2, ax2 = plt.subplots(figsize=(5, 3))
+    sns.countplot(data=eda, x="Department", hue="Performance", ax=ax5)
+
+    ax2.set_title("Performance by Department", color="white", fontsize=10)
     ax2.set_facecolor("#0B1D2A")
     fig2.patch.set_facecolor("#0B1D2A")
     ax2.tick_params(colors="white", labelsize=7)
+    ax2.set_xlabel("")
+    ax2.set_ylabel("")
     plt.xticks(rotation=30)
+    plt.tight_layout()
 
-    col2.pyplot(fig2, use_container_width=False)
-
-    # Department
-    fig3, ax3 = plt.subplots(figsize=(5, 3.5))
-    sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
-
-    ax3.set_title("By Department", color="white", fontsize=10)
-    ax3.set_facecolor("#0B1D2A")
-    fig3.patch.set_facecolor("#0B1D2A")
-    ax3.tick_params(colors="white", labelsize=7)
-    plt.xticks(rotation=30)
-
-    st.pyplot(fig3, use_container_width=False)
+    st.pyplot(fig2, use_container_width=False)
 
 # ================= MODEL COMPARISON =================
     st.subheader("Model Comparison")
