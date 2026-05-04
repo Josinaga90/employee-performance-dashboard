@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-st.cache_resource.clear()
-st.cache_data.clear()
 
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
@@ -60,6 +58,7 @@ body {color: white;}
 def load_data():
     model_RF = joblib.load("model_RF.pkl")
     model_MLR = joblib.load("model_MLR.pkl")
+    st.write("LR real features:", model_MLR.n_features_in_)
     model_SVMC = joblib.load("model_SVMC.pkl")
     scaler = joblib.load("scaler.pkl")
     model_features = joblib.load("model_features.pkl")
