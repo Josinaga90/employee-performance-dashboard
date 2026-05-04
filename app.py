@@ -139,30 +139,28 @@ if section == "Individual Prediction":
         input_data[payzone_column] = 1
 
     input_data = input_data[model_features]
+    
+    st.write("DEBUG columnas:", input_data.columns)
+    st.write("DEBUG len features:", len(model_features))
+    st.write("DEBUG shape:", input_data.shape)
 
-    if st.button("Predict Performance"):
-       st.write("DEBUG 👇")
-       st.write(input_data)
 
+    input_data = input_data.reindex(columns=model_features, fill_value=0)
 
-       if selected_model == "Random Forest":
-           prediction = model_RF.predict(input_data)[0]
+    if st.button("Predict Performance"):        
 
-       elif selected_model == "Logistic Regression":
-           input_scaled = scaler.transform(input_data)
-           prediction = model_MLR.predict(input_scaled)[0]
+        if selected_model == "Random Forest":
+            prediction = model_RF.predict(input_data)[0]
 
-       else:
-           prediction = model_SVMC.predict(scaler.transform(input_data))[0]
+        elif selected_model == "Logistic Regression":
+            input_scaled = scaler.transform(input_data)
+            prediction = model_MLR.predict(input_scaled)[0]
 
-       performance_labels = {
-           0: "PIP",
-           1: "Needs Improvement",
-           2: "Fully Meets",
-           3: "Exceeds"}
-
-       st.subheader("Prediction Result")
-       st.success("Predicted Performance: " + performance_labels[prediction])
+        elif selected_model == "Support Vector Machine":
+            input_scaled = scaler.transform(input_data)
+            prediction = model_SVMC.predict(input_scaled)[0]
+        
+        st.write("Shape input:", input_data.shape)
 
 # =========================================================
 # 2. DASHBOARD
