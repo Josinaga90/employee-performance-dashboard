@@ -57,7 +57,7 @@ body {color: white;}
 @st.cache_resource
 def load_data():
     model_RF = joblib.load("model_RF.pkl")
-    model_MLR = joblib.load("model_MLR.pkl")
+    model_MLR = joblib.load("model_LR.pkl")
     model_SVMC = joblib.load("model_SVMC.pkl")
     scaler = joblib.load("scaler.pkl")
     model_features = joblib.load("model_features.pkl")
