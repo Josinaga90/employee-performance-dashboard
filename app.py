@@ -79,6 +79,13 @@ def load_tables():
     return model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance
 
 model_RF, model_MLR, model_SVMC, scaler, model_features = load_data()
+
+st.write("RF expected features:", model_RF.n_features_in_)
+st.write("LR expected features:", model_MLR.n_features_in_)
+st.write("SVM expected features:", model_SVMC.n_features_in_)
+st.write("Scaler expected features:", scaler.n_features_in_)
+st.write("model_features length:", len(model_features))
+
 model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
 # Dashboard title
@@ -139,7 +146,7 @@ if section == "Individual Prediction":
         input_data[payzone_column] = 1
 
     input_data = input_data[model_features]
-    
+
     st.write("DEBUG columnas:", input_data.columns)
     st.write("DEBUG len features:", len(model_features))
     st.write("DEBUG shape:", input_data.shape)
