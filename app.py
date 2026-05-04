@@ -218,7 +218,7 @@ else:
 
     # Department
     fig5, ax5 = plt.subplots(figsize=(5, 3.5))
-    sns.countplot(data=employees, x="Department Type", hue="PerformanceScore")
+    sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
 
     ax5.set_title("By Department", color="white", fontsize=10)
     ax5.set_facecolor("#0B1D2A")
