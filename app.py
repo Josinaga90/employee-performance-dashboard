@@ -216,7 +216,7 @@ else:
 
     # Performance Distribution
     fig, ax = plt.subplots(figsize=(3.5, 2))
-    sns.countplot(data=eda, x="Performance", palette="Blues", ax=ax3)
+    sns.countplot(data=eda, x="Performance", palette="Blues", ax=ax)
 
     ax.set_title("Performance Distribution", color="white", fontsize=10)
     ax.set_facecolor("#0B1D2A")
@@ -231,7 +231,7 @@ else:
 
     # Performance by Gender
     fig1, ax1 = plt.subplots(figsize=(3.5, 2))
-    sns.countplot(data=eda, x="Performance", hue="Gender", ax=ax4)
+    sns.countplot(data=eda, x="Performance", hue="Gender", ax=ax1)
 
     ax1.set_title("Performance by Gender", color="white", fontsize=10)
     ax1.set_facecolor("#0B1D2A")
@@ -246,7 +246,7 @@ else:
 
     # Performance by Department
     fig2, ax2 = plt.subplots(figsize=(5, 3))
-    sns.countplot(data=eda, x="Department", hue="Performance", ax=ax5)
+    sns.countplot(data=eda, x="Department", hue="Performance", ax=ax2)
 
     ax2.set_title("Performance by Department", color="white", fontsize=10)
     ax2.set_facecolor("#0B1D2A")
