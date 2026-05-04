@@ -193,40 +193,40 @@ else:
     col1, col2 = st.columns(2)
 
     # Distribution
-    fig3, ax3 = plt.subplots(figsize=(3.5,2))
+    fig, ax = plt.subplots(figsize=(3.5,2))
     sns.countplot(data=employees, x="Performance Score", palette="Blues")
 
-    ax3.set_title("Performance", color="white", fontsize=10)
+    ax.set_title("Performance", color="white", fontsize=10)
+    ax.set_facecolor("#0B1D2A")
+    fig.patch.set_facecolor("#0B1D2A")
+    ax.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
+
+    col1.pyplot(fig, use_container_width=False)
+
+    # Gender
+    fig2, ax2 = plt.subplots(figsize=(3.5,2))
+    sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
+
+    ax2.set_title("By Gender", color="white", fontsize=10)
+    ax2.set_facecolor("#0B1D2A")
+    fig2.patch.set_facecolor("#0B1D2A")
+    ax2.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
+
+    col2.pyplot(fig2, use_container_width=False)
+
+    # Department
+    fig3, ax3 = plt.subplots(figsize=(5, 3.5))
+    sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
+
+    ax3.set_title("By Department", color="white", fontsize=10)
     ax3.set_facecolor("#0B1D2A")
     fig3.patch.set_facecolor("#0B1D2A")
     ax3.tick_params(colors="white", labelsize=7)
     plt.xticks(rotation=30)
 
-    col1.pyplot(fig3, use_container_width=False)
-
-    # Gender
-    fig4, ax4 = plt.subplots(figsize=(3.5,2))
-    sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
-
-    ax4.set_title("By Gender", color="white", fontsize=10)
-    ax4.set_facecolor("#0B1D2A")
-    fig4.patch.set_facecolor("#0B1D2A")
-    ax4.tick_params(colors="white", labelsize=7)
-    plt.xticks(rotation=30)
-
-    col2.pyplot(fig4, use_container_width=False)
-
-    # Department
-    fig5, ax5 = plt.subplots(figsize=(5, 3.5))
-    sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
-
-    ax5.set_title("By Department", color="white", fontsize=10)
-    ax5.set_facecolor("#0B1D2A")
-    fig5.patch.set_facecolor("#0B1D2A")
-    ax5.tick_params(colors="white", labelsize=7)
-    plt.xticks(rotation=30)
-
-    st.pyplot(fig5, use_container_width=False)
+    st.pyplot(fig3, use_container_width=False)
 
 # ================= MODEL COMPARISON =================
     st.subheader("Model Comparison")
@@ -247,22 +247,22 @@ else:
     col1, col2 = st.columns(2)
 
     # F1 Macro
-    fig, ax = plt.subplots(figsize=(3.5,2))
+    fig4, ax4 = plt.subplots(figsize=(3.5,2))
     sns.barplot(data=model_comparison_tuned, x="Model", y="F1_Macro", palette="Blues")
-    ax.set_title("F1 Macro", color="white", fontsize=10)
-    ax.set_facecolor("#0B1D2A")
-    fig.patch.set_facecolor("#0B1D2A")
-    ax.tick_params(colors="white", labelsize=7)
-    col1.pyplot(fig, use_container_width=False)
+    ax4.set_title("F1 Macro", color="white", fontsize=10)
+    ax4.set_facecolor("#0B1D2A")
+    fig4.patch.set_facecolor("#0B1D2A")
+    ax4.tick_params(colors="white", labelsize=7)
+    col1.pyplot(fig4, use_container_width=False)
 
     # Accuracy
-    fig2, ax2 = plt.subplots(figsize=(3.5,2))
+    fig5, ax5 = plt.subplots(figsize=(3.5,2))
     sns.barplot(data=model_comparison_tuned, x="Model", y="Accuracy", palette="light:cyan")
-    ax2.set_title("Accuracy", color="white", fontsize=10)
-    ax2.set_facecolor("#0B1D2A")
-    fig2.patch.set_facecolor("#0B1D2A")
-    ax2.tick_params(colors="white", labelsize=7)
-    col2.pyplot(fig2, use_container_width=False)
+    ax5.set_title("Accuracy", color="white", fontsize=10)
+    ax5.set_facecolor("#0B1D2A")
+    fig5.patch.set_facecolor("#0B1D2A")
+    ax5.tick_params(colors="white", labelsize=7)
+    col2.pyplot(fig5, use_container_width=False)
 
     st.divider()
 
