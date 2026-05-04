@@ -141,6 +141,7 @@ if section == "Individual Prediction":
     input_data = input_data[model_features]
 
     if st.button("Predict Performance"):
+       st.write(input_data)
 
         if selected_model == "Random Forest":
             prediction = model_RF.predict(input_data)[0]
