@@ -187,59 +187,68 @@ else:
 
     st.divider()
 
-    # ================= DATA INSIGHTS =================
+# ================= DATA INSIGHTS =================
     st.subheader("Data Insights")
 
-    # Cleaning column names to avoid errors with spaces
-    employees.columns = employees.columns.str.strip().str.replace(" ", "_")
+    eda = employees.copy()
 
-    # Checking required columns
-    required_columns = ["Performance_Score", "GenderCode", "DepartmentType"]
+# ================= FIX VARIABLES =================
 
-    missing_columns = [col for col in required_columns if col not in employees.columns]
+    # Target
+    eda["Performance"] = eda["Target_Performance"]
 
-    if len(missing_columns) > 0:
-        st.error("Missing columns in employees_clean.csv: " + str(missing_columns))
-        st.write("Available columns:", list(employees.columns))
+    # Gender
+    eda["Gender"] = eda["GenderCode"].map({0: "Male", 1: "Female"})
 
-    else:
-        col1, col2 = st.columns(2)
+    # Department (reconstrucción desde dummies)
+    dept_cols = [col for col in eda.columns if "DepartmentType_" in col]
 
-        # Distribution
-        fig, ax = plt.subplots(figsize=(3.5,2))
-        sns.countplot(data=employees, x="Performance Score", palette="Blues")
+    def get_department(row):
+        for col in dept_cols:
+            if row[col] == 1:
+                return col.replace("DepartmentType_", "")
+        return "Other"
 
-        ax.set_title("Performance", color="white", fontsize=10)
-        ax.set_facecolor("#0B1D2A")
-        fig.patch.set_facecolor("#0B1D2A")
-        ax.tick_params(colors="white", labelsize=7)
-        plt.xticks(rotation=30)
+    eda["Department"] = eda.apply(get_department, axis=1)
 
-        col1.pyplot(fig, use_container_width=False)
+# ================= GRAPHS =================
+    col1, col2 = st.columns(2)
 
-        # Gender
-        fig2, ax2 = plt.subplots(figsize=(3.5,2))
-        sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
+    # Distribution
+    fig, ax = plt.subplots(figsize=(3.5,2))
+    sns.countplot(data=employees, x="Performance Score", palette="Blues")
 
-        ax2.set_title("By Gender", color="white", fontsize=10)
-        ax2.set_facecolor("#0B1D2A")
-        fig2.patch.set_facecolor("#0B1D2A")
-        ax2.tick_params(colors="white", labelsize=7)
-        plt.xticks(rotation=30)
+    ax.set_title("Performance", color="white", fontsize=10)
+    ax.set_facecolor("#0B1D2A")
+    fig.patch.set_facecolor("#0B1D2A")
+    ax.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
 
-        col2.pyplot(fig2, use_container_width=False)
+    col1.pyplot(fig, use_container_width=False)
 
-        # Department
-        fig3, ax3 = plt.subplots(figsize=(5, 3.5))
-        sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
+    # Gender
+    fig2, ax2 = plt.subplots(figsize=(3.5,2))
+    sns.countplot(data=employees, x="Performance Score", hue="GenderCode")
 
-        ax3.set_title("By Department", color="white", fontsize=10)
-        ax3.set_facecolor("#0B1D2A")
-        fig3.patch.set_facecolor("#0B1D2A")
-        ax3.tick_params(colors="white", labelsize=7)
-        plt.xticks(rotation=30)
+    ax2.set_title("By Gender", color="white", fontsize=10)
+    ax2.set_facecolor("#0B1D2A")
+    fig2.patch.set_facecolor("#0B1D2A")
+    ax2.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
 
-        st.pyplot(fig3, use_container_width=False)
+    col2.pyplot(fig2, use_container_width=False)
+
+    # Department
+    fig3, ax3 = plt.subplots(figsize=(5, 3.5))
+    sns.countplot(data=employees, x="DepartmentType", hue="Performance Score")
+
+    ax3.set_title("By Department", color="white", fontsize=10)
+    ax3.set_facecolor("#0B1D2A")
+    fig3.patch.set_facecolor("#0B1D2A")
+    ax3.tick_params(colors="white", labelsize=7)
+    plt.xticks(rotation=30)
+
+    st.pyplot(fig3, use_container_width=False)
 
 # ================= MODEL COMPARISON =================
     st.subheader("Model Comparison")
