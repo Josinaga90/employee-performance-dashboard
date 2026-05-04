@@ -58,7 +58,6 @@ body {color: white;}
 def load_data():
     model_RF = joblib.load("model_RF.pkl")
     model_MLR = joblib.load("model_MLR.pkl")
-    st.write("LR real features:", model_MLR.n_features_in_)
     model_SVMC = joblib.load("model_SVMC.pkl")
     scaler = joblib.load("scaler.pkl")
     model_features = joblib.load("model_features.pkl")
