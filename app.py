@@ -161,7 +161,7 @@ def style_legend(ax):
 # ================================
 # LOAD MODELS
 # ================================
-#@st.cache_resource
+
 def load_data():
     model_RF = joblib.load("model_RF.pkl")
     model_LR = joblib.load("model_LR.pkl")
@@ -172,7 +172,7 @@ def load_data():
     return model_RF, model_LR, model_SVMC, scaler, list(model_features)
 
 #Loading result tables
-#@st.cache_data
+
 def load_tables():
     employees = pd.read_csv("employees_clean.csv")
     model_comparison_MB = pd.read_csv("model_comparison_modelbase.csv")
@@ -189,6 +189,27 @@ def load_tables():
 model_RF, model_LR, model_SVMC, scaler, model_features = load_data()
 model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
+from datetime import datetime
+
+st.sidebar.write("DEBUG FILES")
+st.sidebar.write("Current folder:", os.getcwd())
+
+st.sidebar.write(
+    "Base CSV modified:",
+    datetime.fromtimestamp(os.path.getmtime("model_comparison_modelbase.csv"))
+)
+
+st.sidebar.write(
+    "Tuned CSV modified:",
+    datetime.fromtimestamp(os.path.getmtime("model_comparison_modeltuned.csv"))
+)
+
+st.sidebar.write("Base CSV values:")
+st.sidebar.dataframe(model_comparison_MB)
+
+st.sidebar.write("Tuned CSV values:")
+st.sidebar.dataframe(model_comparison_tuned)
+
 # Dashboard title
 st.title("Employee Performance Prediction Dashboard")
 
@@ -197,10 +218,6 @@ section = st.sidebar.selectbox(
     "Select Section",
     ["Individual Prediction", "Dashboard"])
 
-if st.sidebar.button("Clear cache"):
-    st.cache_data.clear()
-    st.cache_resource.clear()
-    st.rerun()
 
 #========================================================================
 # 1. INDIVIDUAL PREDICTION
@@ -387,12 +404,24 @@ else:
     col1, col2 = st.columns(2, gap="small")
 
     col1.write("Base Models")
-    col1.dataframe(model_comparison_MB.round(4), use_container_width=True)
+
+    metric_cols_MB = [
+        col for col in model_comparison_MB.columns
+        if col != "Model"]
+
+    col1.dataframe(
+        model_comparison_MB.style.format("{:.2%}", subset=metric_cols_MB),
+        use_container_width=True)
 
     col2.write("Tuned Models")
-    col2.dataframe(model_comparison_tuned.round(4), use_container_width=True)
 
-    st.divider()
+    metric_cols_tuned = [
+        col for col in model_comparison_tuned.columns
+        if col != "Model"]
+
+    col2.dataframe(
+        model_comparison_tuned.style.format("{:.2%}", subset=metric_cols_tuned),
+        use_container_width=True)
 
 
     # ================= PERFORMANCE GRAPHS =================
