@@ -76,7 +76,7 @@ st.markdown("""
 
     /* KPI percentage/delta */
     div[data-testid="stMetricDelta"] {
-        font-size: 13px !important;
+        font-size: 18px !important;
         line-height: 1.1 !important;
     }
 
