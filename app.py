@@ -189,21 +189,6 @@ def load_tables():
 model_RF, model_LR, model_SVMC, scaler, model_features = load_data()
 model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
-from datetime import datetime
-
-st.sidebar.write("DEBUG FILES")
-st.sidebar.write("Current folder:", os.getcwd())
-
-st.sidebar.write(
-    "Base CSV modified:",
-    datetime.fromtimestamp(os.path.getmtime("model_comparison_modelbase.csv"))
-)
-
-st.sidebar.write(
-    "Tuned CSV modified:",
-    datetime.fromtimestamp(os.path.getmtime("model_comparison_modeltuned.csv"))
-)
-
 st.sidebar.write("Base CSV values:")
 st.sidebar.dataframe(model_comparison_MB)
 
