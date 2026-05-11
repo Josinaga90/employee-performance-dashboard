@@ -56,24 +56,27 @@ st.markdown("""
         padding: 0rem 0.2rem;
     }
 
-    /* Reducing KPI metric size */
+    /* KPI card spacing */
     div[data-testid="stMetric"] {
         padding: 0rem !important;
     }
 
+    /* KPI label */
     div[data-testid="stMetricLabel"] {
-        font-size: 11px !important;
+        font-size: 12px !important;
         line-height: 1.1 !important;
     }
 
+    /* KPI main value */
     div[data-testid="stMetricValue"] {
-        font-size: 20px !important;
+        font-size: 26px !important;
         line-height: 1.1 !important;
         white-space: nowrap !important;
     }
 
+    /* KPI percentage/delta */
     div[data-testid="stMetricDelta"] {
-        font-size: 11px !important;
+        font-size: 13px !important;
         line-height: 1.1 !important;
     }
 
