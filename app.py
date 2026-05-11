@@ -14,40 +14,16 @@ st.set_page_config(page_title="Employee Performance Prediction Dashboard", layou
 # ================================
 # DASHBOARD STYLE
 # ================================
+st.set_page_config(layout="wide")
+
 st.markdown("""
 <style>
     .block-container {
-        padding-top: 0.2rem;
+        padding-top: 0.5rem;
         padding-bottom: 0rem;
-        padding-left: 0.7rem;
-        padding-right: 0.7rem;
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
         max-width: 100%;
-    }
-
-    .stApp {
-        background-color: #061A2E;
-    }
-
-    .main-title {
-        color: white;
-        font-size: 32px;
-        font-weight: 800;
-        line-height: 1.1;
-        margin-bottom: 0.2rem;
-    }
-
-    .main-subtitle {
-        color: white;
-        font-size: 14px;
-        margin-bottom: 1.2rem;
-    }
-
-    .section-title {
-        color: white;
-        font-size: 30px;
-        font-weight: 800;
-        margin-top: 0.4rem;
-        margin-bottom: 0.8rem;
     }
 
     h1, h2, h3 {
@@ -56,7 +32,7 @@ st.markdown("""
     }
 
     div[data-testid="stVerticalBlock"] {
-        gap: 0.35rem;
+        gap: 0.4rem;
     }
 
     div[data-testid="column"] {
@@ -64,6 +40,7 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 # ================================
 # HELPER FUNCTIONS
@@ -167,14 +144,7 @@ model_RF, model_LR, model_SVMC, scaler, model_features = load_data()
 model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
 # Dashboard title
-st.markdown("""
-<div class="main-title">
-    Employee Performance Prediction Dashboard
-</div>
-<div class="main-subtitle">
-    This dashboard presents individual employee performance prediction, model comparison, and fairness analysis by gender and age.
-</div>
-""", unsafe_allow_html=True)
+st.title("Employee Performance Prediction Dashboard")
 
 #Sidebar: Create interactive inputs for the HR Manager
 section = st.sidebar.selectbox(
@@ -257,7 +227,7 @@ if section == "Individual Prediction":
 
 else:
 
-    st.markdown('<div class="section-title">Performance Dashboard</div>', unsafe_allow_html=True)
+    st.subheader("Performance Dashboard")
 
 
     # ================= KPI =================
@@ -321,8 +291,7 @@ else:
         hue="Performance",
         palette="crest",
         legend=False,
-        ax=ax
-    )
+        ax=ax)
 
     style_dark_chart(fig, ax, "Performance Distribution")
     plt.xticks(rotation=25)
@@ -337,8 +306,7 @@ else:
         x="Performance",
         hue="Gender",
         palette="crest",
-        ax=ax1
-    )
+        ax=ax1)
 
     style_dark_chart(fig1, ax1, "Performance by Gender")
     style_legend(ax1)
@@ -354,8 +322,7 @@ else:
         x="Department",
         hue="Performance",
         palette="crest",
-        ax=ax2
-    )
+        ax=ax2)
 
     style_dark_chart(fig2, ax2, "Performance by Department")
     style_legend(ax2)
@@ -396,8 +363,7 @@ else:
         hue="Model",
         palette="crest",
         legend=False,
-        ax=ax4
-    )
+        ax=ax4)
 
     style_dark_chart(fig4, ax4, "F1 Macro")
     plt.xticks(rotation=20)
@@ -414,8 +380,7 @@ else:
         hue="Model",
         palette="crest",
         legend=False,
-        ax=ax5
-    )
+        ax=ax5)
 
     style_dark_chart(fig5, ax5, "Accuracy")
     plt.xticks(rotation=20)
@@ -442,8 +407,7 @@ else:
             hue="Feature",
             palette="crest",
             legend=False,
-            ax=ax6
-        )
+            ax=ax6)
 
         style_importance_chart(fig6, ax6, "Random Forest")
         st.pyplot(fig6, use_container_width=True)
@@ -461,8 +425,7 @@ else:
             hue="Feature",
             palette="crest",
             legend=False,
-            ax=ax7
-        )
+            ax=ax7)
 
         style_importance_chart(fig7, ax7, "Logistic Regression")
         st.pyplot(fig7, use_container_width=True)
@@ -480,8 +443,7 @@ else:
             hue="Feature",
             palette="crest",
             legend=False,
-            ax=ax8
-        )
+            ax=ax8)
 
         style_importance_chart(fig8, ax8, "Support Vector Machine")
         st.pyplot(fig8, use_container_width=True)
