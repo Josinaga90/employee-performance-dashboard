@@ -9,32 +9,26 @@ import os
 
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
-
-
 # ================================
 # DASHBOARD STYLE
 # ================================
-
 st.markdown("""
 <style>
-    /* Main page container spacing */
     .block-container {
-        padding-top: 0.6rem;
+        padding-top: 1.2rem;
         padding-bottom: 0rem;
         padding-left: 0.8rem;
         padding-right: 0.8rem;
         max-width: 100%;
     }
 
-    /* Main title size */
     h1 {
         font-size: 32px !important;
         line-height: 1.1 !important;
         margin-top: 0rem !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.6rem !important;
     }
 
-    /* Section titles */
     h2 {
         font-size: 24px !important;
         line-height: 1.1 !important;
@@ -49,41 +43,34 @@ st.markdown("""
         margin-bottom: 0.4rem !important;
     }
 
-    /* Reducing space between blocks */
     div[data-testid="stVerticalBlock"] {
         gap: 0.25rem;
     }
 
-    /* Reducing column spacing */
     div[data-testid="column"] {
         padding: 0rem 0.15rem;
     }
 
-    /* Reducing KPI spacing */
     div[data-testid="stMetric"] {
         padding: 0rem !important;
     }
 
-    /* KPI label */
     div[data-testid="stMetricLabel"] {
         font-size: 11px !important;
         line-height: 1.1 !important;
     }
 
-    /* KPI main value */
     div[data-testid="stMetricValue"] {
         font-size: 20px !important;
         line-height: 1.1 !important;
         white-space: nowrap !important;
     }
 
-    /* KPI percentage/delta */
     div[data-testid="stMetricDelta"] {
         font-size: 11px !important;
         line-height: 1.1 !important;
     }
 
-    /* Small extra spacing after dividers */
     hr {
         margin-top: 0.6rem !important;
         margin-bottom: 0.6rem !important;
@@ -276,14 +263,11 @@ if section == "Individual Prediction":
 
 else:
 
-    st.subheader("Performance Dashboard")
-
-
     # ================= KPI =================
 
     st.subheader("Key Metrics")
 
-    col1, col2, col3 = st.columns([1, 1, 1], gap="small")
+    col1, col2, col3 = st.columns(3, gap="small")
 
     if "F1_Macro" in model_comparison_tuned.columns:
         best_macro = model_comparison_tuned.loc[model_comparison_tuned["F1_Macro"].idxmax()]
