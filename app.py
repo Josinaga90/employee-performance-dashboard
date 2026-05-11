@@ -203,16 +203,6 @@ section = st.sidebar.selectbox(
     "Select Section",
     ["Individual Prediction", "Dashboard"])
 
-st.sidebar.error("CSV QUE STREAMLIT ESTÁ LEYENDO")
-
-st.sidebar.write("Folder actual:")
-st.sidebar.write(os.getcwd())
-
-st.sidebar.write("BASE:")
-st.sidebar.dataframe(model_comparison_MB)
-
-st.sidebar.write("TUNED:")
-st.sidebar.dataframe(model_comparison_tuned)
 
 #========================================================================
 # 1. INDIVIDUAL PREDICTION
