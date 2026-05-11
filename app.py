@@ -9,7 +9,11 @@ import os
 
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
-#Setting Colour
+
+
+# ================================
+# DASHBOARD STYLE
+# ================================
 st.set_page_config(layout="wide")
 
 st.markdown("""
@@ -37,6 +41,75 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
+# ================================
+# HELPER FUNCTIONS
+# ================================
+
+# Function to apply dark style to regular charts
+def style_dark_chart(fig, ax, title):
+
+    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
+
+    ax.set_facecolor("#061A2E")
+    fig.patch.set_facecolor("#061A2E")
+
+    ax.tick_params(colors="white", labelsize=7)
+
+    ax.xaxis.label.set_color("white")
+    ax.yaxis.label.set_color("white")
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+
+    ax.grid(axis="y", color="white", alpha=0.12)
+    ax.grid(axis="x", color="white", alpha=0.12)
+
+    for spine in ax.spines.values():
+        spine.set_color("#061A2E")
+
+    fig.subplots_adjust(left=0.18, right=0.98, top=0.86, bottom=0.20)
+
+
+# Function to apply dark style to importance charts
+def style_importance_chart(fig, ax, title):
+
+    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
+
+    ax.set_facecolor("#061A2E")
+    fig.patch.set_facecolor("#061A2E")
+
+    ax.tick_params(colors="white", labelsize=7)
+
+    ax.xaxis.label.set_color("white")
+    ax.yaxis.label.set_color("white")
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+
+    ax.grid(axis="x", color="white", alpha=0.18)
+    ax.grid(axis="y", alpha=0)
+
+    for spine in ax.spines.values():
+        spine.set_color("#061A2E")
+
+    fig.subplots_adjust(left=0.38, right=0.98, top=0.86, bottom=0.12)
+
+
+# Function to style legends
+def style_legend(ax):
+
+    legend = ax.legend(fontsize=7, title_fontsize=8)
+
+    if legend is not None:
+        legend.get_frame().set_facecolor("#061A2E")
+        legend.get_frame().set_edgecolor("#061A2E")
+
+        for text in legend.get_texts():
+            text.set_color("white")
+
+        if legend.get_title() is not None:
+            legend.get_title().set_color("white")
 
 
 # ================================
@@ -151,61 +224,6 @@ if section == "Individual Prediction":
         st.subheader("Prediction Result")
         st.success("Predicted Performance: " + performance_labels[prediction])
 
-
-# =========================================================
-# HELPER FUNCTIONS
-# =========================================================
-
-# Function to apply the same dark style to all graphs
-def style_dark_chart(fig, ax, title):
-
-    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
-
-    ax.set_facecolor("#061A2E")
-    fig.patch.set_facecolor("#061A2E")
-
-    ax.tick_params(colors="white", labelsize=7)
-
-    ax.xaxis.label.set_color("white")
-    ax.yaxis.label.set_color("white")
-
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-
-    ax.grid(axis="y", color="white", alpha=0.12)
-    ax.grid(axis="x", color="white", alpha=0.12)
-
-    for spine in ax.spines.values():
-        spine.set_color("#061A2E")
-
-    fig.subplots_adjust(left=0.18, right=0.98, top=0.86, bottom=0.18)
-
-
-# Function to apply the same style to horizontal importance graphs
-def style_importance_chart(fig, ax, title):
-
-    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
-
-    ax.set_facecolor("#061A2E")
-    fig.patch.set_facecolor("#061A2E")
-
-    ax.tick_params(colors="white", labelsize=7)
-
-    ax.xaxis.label.set_color("white")
-    ax.yaxis.label.set_color("white")
-
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-
-    ax.grid(axis="x", color="white", alpha=0.18)
-    ax.grid(axis="y", alpha=0)
-
-    for spine in ax.spines.values():
-        spine.set_color("#061A2E")
-
-    fig.subplots_adjust(left=0.38, right=0.98, top=0.86, bottom=0.12)
-
-
 # =========================================================
 # 2. DASHBOARD
 # =========================================================
@@ -213,6 +231,7 @@ def style_importance_chart(fig, ax, title):
 else:
 
     st.title("Performance Dashboard")
+
 
     # ================= KPI =================
 
@@ -240,6 +259,7 @@ else:
     st.subheader("Data Insights")
 
     eda = employees.copy()
+
 
     # ================= FIX VARIABLES =================
 
@@ -274,7 +294,8 @@ else:
         hue="Performance",
         palette="crest",
         legend=False,
-        ax=ax)
+        ax=ax
+    )
 
     style_dark_chart(fig, ax, "Performance Distribution")
     plt.xticks(rotation=25)
@@ -289,19 +310,11 @@ else:
         x="Performance",
         hue="Gender",
         palette="crest",
-        ax=ax1)
+        ax=ax1
+    )
 
     style_dark_chart(fig1, ax1, "Performance by Gender")
-
-    legend = ax1.legend(title="Gender", fontsize=7, title_fontsize=8)
-    legend.get_frame().set_facecolor("#061A2E")
-    legend.get_frame().set_edgecolor("#061A2E")
-
-    for text in legend.get_texts():
-        text.set_color("white")
-
-    legend.get_title().set_color("white")
-
+    style_legend(ax1)
     plt.xticks(rotation=25)
     col2.pyplot(fig1, use_container_width=True)
 
@@ -314,19 +327,11 @@ else:
         x="Department",
         hue="Performance",
         palette="crest",
-        ax=ax2)
+        ax=ax2
+    )
 
     style_dark_chart(fig2, ax2, "Performance by Department")
-
-    legend = ax2.legend(title="Performance", fontsize=7, title_fontsize=8)
-    legend.get_frame().set_facecolor("#061A2E")
-    legend.get_frame().set_edgecolor("#061A2E")
-
-    for text in legend.get_texts():
-        text.set_color("white")
-
-    legend.get_title().set_color("white")
-
+    style_legend(ax2)
     plt.xticks(rotation=25)
     st.pyplot(fig2, use_container_width=True)
 
@@ -364,7 +369,8 @@ else:
         hue="Model",
         palette="crest",
         legend=False,
-        ax=ax4)
+        ax=ax4
+    )
 
     style_dark_chart(fig4, ax4, "F1 Macro")
     plt.xticks(rotation=20)
@@ -381,7 +387,8 @@ else:
         hue="Model",
         palette="crest",
         legend=False,
-        ax=ax5)
+        ax=ax5
+    )
 
     style_dark_chart(fig5, ax5, "Accuracy")
     plt.xticks(rotation=20)
@@ -408,7 +415,8 @@ else:
             hue="Feature",
             palette="crest",
             legend=False,
-            ax=ax6)
+            ax=ax6
+        )
 
         style_importance_chart(fig6, ax6, "Random Forest")
         st.pyplot(fig6, use_container_width=True)
@@ -426,7 +434,8 @@ else:
             hue="Feature",
             palette="crest",
             legend=False,
-            ax=ax7)
+            ax=ax7
+        )
 
         style_importance_chart(fig7, ax7, "Logistic Regression")
         st.pyplot(fig7, use_container_width=True)
@@ -444,7 +453,8 @@ else:
             hue="Feature",
             palette="crest",
             legend=False,
-            ax=ax8)
+            ax=ax8
+        )
 
         style_importance_chart(fig8, ax8, "Support Vector Machine")
         st.pyplot(fig8, use_container_width=True)
