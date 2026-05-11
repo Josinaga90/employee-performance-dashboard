@@ -14,16 +14,40 @@ st.set_page_config(page_title="Employee Performance Prediction Dashboard", layou
 # ================================
 # DASHBOARD STYLE
 # ================================
-st.set_page_config(layout="wide")
-
 st.markdown("""
 <style>
     .block-container {
-        padding-top: 0.5rem;
+        padding-top: 0.2rem;
         padding-bottom: 0rem;
-        padding-left: 0.8rem;
-        padding-right: 0.8rem;
+        padding-left: 0.7rem;
+        padding-right: 0.7rem;
         max-width: 100%;
+    }
+
+    .stApp {
+        background-color: #061A2E;
+    }
+
+    .main-title {
+        color: white;
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 0.2rem;
+    }
+
+    .main-subtitle {
+        color: white;
+        font-size: 14px;
+        margin-bottom: 1.2rem;
+    }
+
+    .section-title {
+        color: white;
+        font-size: 30px;
+        font-weight: 800;
+        margin-top: 0.4rem;
+        margin-bottom: 0.8rem;
     }
 
     h1, h2, h3 {
@@ -32,7 +56,7 @@ st.markdown("""
     }
 
     div[data-testid="stVerticalBlock"] {
-        gap: 0.4rem;
+        gap: 0.35rem;
     }
 
     div[data-testid="column"] {
@@ -40,7 +64,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
 
 # ================================
 # HELPER FUNCTIONS
@@ -144,10 +167,14 @@ model_RF, model_LR, model_SVMC, scaler, model_features = load_data()
 model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
 # Dashboard title
-st.title("Employee Performance Prediction Dashboard")
-
-st.write("This dashboard presents individual employee performance prediction, "
-    "model comparison, and fairness analysis by gender and age.")
+st.markdown("""
+<div class="main-title">
+    Employee Performance Prediction Dashboard
+</div>
+<div class="main-subtitle">
+    This dashboard presents individual employee performance prediction, model comparison, and fairness analysis by gender and age.
+</div>
+""", unsafe_allow_html=True)
 
 #Sidebar: Create interactive inputs for the HR Manager
 section = st.sidebar.selectbox(
@@ -230,7 +257,7 @@ if section == "Individual Prediction":
 
 else:
 
-    st.title("Performance Dashboard")
+    st.markdown('<div class="section-title">Performance Dashboard</div>', unsafe_allow_html=True)
 
 
     # ================= KPI =================
