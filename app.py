@@ -10,42 +10,30 @@ import os
 st.set_page_config(page_title="Employee Performance Prediction Dashboard", layout="wide")
 
 #Setting Colour
+st.set_page_config(layout="wide")
+
 st.markdown("""
 <style>
+    .block-container {
+        padding-top: 0.5rem;
+        padding-bottom: 0rem;
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+        max-width: 100%;
+    }
 
-/* Fondo principal */
-.stApp {background-color: #0B1D2A;}
+    h1, h2, h3 {
+        margin-top: 0rem;
+        margin-bottom: 0.4rem;
+    }
 
-/* Sidebar */
-section[data-testid="stSidebar"] {background-color: #081520;}
+    div[data-testid="stVerticalBlock"] {
+        gap: 0.4rem;
+    }
 
-/* Títulos */
-h1, h2, h3 {color: #E6F7FF;}
-
-/* Cards tipo dashboard */
-div[data-testid="stMetric"] {
-    background-color: #132F44;
-    padding: 15px;
-    border-radius: 10px;}
-
-/* Botones */
-.stButton>button {
-    background-color: #00C2D1;
-    color: white;
-    border-radius: 8px;}
-
-/* Hover botones */
-.stButton>button:hover {background-color: #00A6B5;}
-
-/* Dataframe */
-.css-1d391kg {background-color: #132F44;}
-
-/* Labels */
-label {color: #E6F7FF;}
-
-/* Texto general */
-body {color: white;}
-
+    div[data-testid="column"] {
+        padding: 0rem 0.2rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -141,7 +129,7 @@ if section == "Individual Prediction":
 
     input_data = input_data[model_features]
 
-    if st.button("Predict Performance"):        
+    if st.button("Predict Performance"):
 
         if selected_model == "Random Forest":
             prediction = model_RF.predict(input_data)[0]
@@ -163,17 +151,74 @@ if section == "Individual Prediction":
         st.subheader("Prediction Result")
         st.success("Predicted Performance: " + performance_labels[prediction])
 
+
+# =========================================================
+# HELPER FUNCTIONS
+# =========================================================
+
+# Function to apply the same dark style to all graphs
+def style_dark_chart(fig, ax, title):
+
+    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
+
+    ax.set_facecolor("#061A2E")
+    fig.patch.set_facecolor("#061A2E")
+
+    ax.tick_params(colors="white", labelsize=7)
+
+    ax.xaxis.label.set_color("white")
+    ax.yaxis.label.set_color("white")
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+
+    ax.grid(axis="y", color="white", alpha=0.12)
+    ax.grid(axis="x", color="white", alpha=0.12)
+
+    for spine in ax.spines.values():
+        spine.set_color("#061A2E")
+
+    fig.subplots_adjust(left=0.18, right=0.98, top=0.86, bottom=0.18)
+
+
+# Function to apply the same style to horizontal importance graphs
+def style_importance_chart(fig, ax, title):
+
+    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
+
+    ax.set_facecolor("#061A2E")
+    fig.patch.set_facecolor("#061A2E")
+
+    ax.tick_params(colors="white", labelsize=7)
+
+    ax.xaxis.label.set_color("white")
+    ax.yaxis.label.set_color("white")
+
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+
+    ax.grid(axis="x", color="white", alpha=0.18)
+    ax.grid(axis="y", alpha=0)
+
+    for spine in ax.spines.values():
+        spine.set_color("#061A2E")
+
+    fig.subplots_adjust(left=0.38, right=0.98, top=0.86, bottom=0.12)
+
+
 # =========================================================
 # 2. DASHBOARD
 # =========================================================
+
 else:
 
     st.title("Performance Dashboard")
 
-# ================= KPI =================
+    # ================= KPI =================
+
     st.subheader("Key Metrics")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3, gap="small")
 
     if "F1_Macro" in model_comparison_tuned.columns:
         best_macro = model_comparison_tuned.loc[model_comparison_tuned["F1_Macro"].idxmax()]
@@ -189,12 +234,14 @@ else:
 
     st.divider()
 
-# ================= DATA INSIGHTS =================
+
+    # ================= DATA INSIGHTS =================
+
     st.subheader("Data Insights")
 
     eda = employees.copy()
 
-# ================= FIX VARIABLES =================
+    # ================= FIX VARIABLES =================
 
     # Target
     eda["Performance"] = eda["Target_Performance"]
@@ -202,7 +249,7 @@ else:
     # Gender
     eda["Gender"] = eda["GenderCode"].map({0: "Male", 1: "Female"})
 
-    # Department (reconstrucción desde dummies)
+    # Department reconstruction from dummy variables
     dept_cols = [col for col in eda.columns if "DepartmentType_" in col]
 
     def get_department(row):
@@ -213,138 +260,206 @@ else:
 
     eda["Department"] = eda.apply(get_department, axis=1)
 
-# ================= GRAPHS =================
-    col1, col2 = st.columns(2)
+
+    # ================= GRAPHS =================
+
+    col1, col2 = st.columns(2, gap="small")
 
     # Performance Distribution
-    fig, ax = plt.subplots(figsize=(3.5, 2))
-    sns.countplot(data=eda, x="Performance", palette="Blues", ax=ax)
+    fig, ax = plt.subplots(figsize=(4.6, 2.4))
 
-    ax.set_title("Performance Distribution", color="white", fontsize=10)
-    ax.set_facecolor("#0B1D2A")
-    fig.patch.set_facecolor("#0B1D2A")
-    ax.tick_params(colors="white", labelsize=7)
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-    plt.xticks(rotation=30)
-    plt.tight_layout()
+    sns.countplot(
+        data=eda,
+        x="Performance",
+        hue="Performance",
+        palette="crest",
+        legend=False,
+        ax=ax)
 
-    col1.pyplot(fig, use_container_width=False)
+    style_dark_chart(fig, ax, "Performance Distribution")
+    plt.xticks(rotation=25)
+    col1.pyplot(fig, use_container_width=True)
+
 
     # Performance by Gender
-    fig1, ax1 = plt.subplots(figsize=(3.5, 2))
-    sns.countplot(data=eda, x="Performance", hue="Gender", ax=ax1)
+    fig1, ax1 = plt.subplots(figsize=(4.6, 2.4))
 
-    ax1.set_title("Performance by Gender", color="white", fontsize=10)
-    ax1.set_facecolor("#0B1D2A")
-    fig1.patch.set_facecolor("#0B1D2A")
-    ax1.tick_params(colors="white", labelsize=7)
-    ax1.set_xlabel("")
-    ax1.set_ylabel("")
-    plt.xticks(rotation=30)
-    plt.tight_layout()
+    sns.countplot(
+        data=eda,
+        x="Performance",
+        hue="Gender",
+        palette="crest",
+        ax=ax1)
 
-    col2.pyplot(fig1, use_container_width=False)
+    style_dark_chart(fig1, ax1, "Performance by Gender")
+
+    legend = ax1.legend(title="Gender", fontsize=7, title_fontsize=8)
+    legend.get_frame().set_facecolor("#061A2E")
+    legend.get_frame().set_edgecolor("#061A2E")
+
+    for text in legend.get_texts():
+        text.set_color("white")
+
+    legend.get_title().set_color("white")
+
+    plt.xticks(rotation=25)
+    col2.pyplot(fig1, use_container_width=True)
+
 
     # Performance by Department
-    fig2, ax2 = plt.subplots(figsize=(5, 3))
-    sns.countplot(data=eda, x="Department", hue="Performance", ax=ax2)
+    fig2, ax2 = plt.subplots(figsize=(9.6, 2.8))
 
-    ax2.set_title("Performance by Department", color="white", fontsize=10)
-    ax2.set_facecolor("#0B1D2A")
-    fig2.patch.set_facecolor("#0B1D2A")
-    ax2.tick_params(colors="white", labelsize=7)
-    ax2.set_xlabel("")
-    ax2.set_ylabel("")
-    plt.xticks(rotation=30)
-    plt.tight_layout()
+    sns.countplot(
+        data=eda,
+        x="Department",
+        hue="Performance",
+        palette="crest",
+        ax=ax2)
 
-    st.pyplot(fig2, use_container_width=False)
+    style_dark_chart(fig2, ax2, "Performance by Department")
 
-# ================= MODEL COMPARISON =================
+    legend = ax2.legend(title="Performance", fontsize=7, title_fontsize=8)
+    legend.get_frame().set_facecolor("#061A2E")
+    legend.get_frame().set_edgecolor("#061A2E")
+
+    for text in legend.get_texts():
+        text.set_color("white")
+
+    legend.get_title().set_color("white")
+
+    plt.xticks(rotation=25)
+    st.pyplot(fig2, use_container_width=True)
+
+    st.divider()
+
+
+    # ================= MODEL COMPARISON =================
+
     st.subheader("Model Comparison")
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="small")
 
     col1.write("Base Models")
-    col1.dataframe(model_comparison_MB.round(4))
+    col1.dataframe(model_comparison_MB.round(4), use_container_width=True)
 
     col2.write("Tuned Models")
-    col2.dataframe(model_comparison_tuned.round(4))
+    col2.dataframe(model_comparison_tuned.round(4), use_container_width=True)
 
     st.divider()
 
-# ================= PERFORMANCE GRAPHS =================
+
+    # ================= PERFORMANCE GRAPHS =================
+
     st.subheader("Performance Comparison")
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="small")
 
     # F1 Macro
-    fig4, ax4 = plt.subplots(figsize=(3.5,2))
-    sns.barplot(data=model_comparison_tuned, x="Model", y="F1_Macro", palette="Blues")
-    ax4.set_title("F1 Macro", color="white", fontsize=10)
-    ax4.set_facecolor("#0B1D2A")
-    fig4.patch.set_facecolor("#0B1D2A")
-    ax4.tick_params(colors="white", labelsize=7)
-    col1.pyplot(fig4, use_container_width=False)
+    fig4, ax4 = plt.subplots(figsize=(4.6, 2.4))
+
+    sns.barplot(
+        data=model_comparison_tuned,
+        x="Model",
+        y="F1_Macro",
+        hue="Model",
+        palette="crest",
+        legend=False,
+        ax=ax4)
+
+    style_dark_chart(fig4, ax4, "F1 Macro")
+    plt.xticks(rotation=20)
+    col1.pyplot(fig4, use_container_width=True)
+
 
     # Accuracy
-    fig5, ax5 = plt.subplots(figsize=(3.5,2))
-    sns.barplot(data=model_comparison_tuned, x="Model", y="Accuracy", palette="light:cyan")
-    ax5.set_title("Accuracy", color="white", fontsize=10)
-    ax5.set_facecolor("#0B1D2A")
-    fig5.patch.set_facecolor("#0B1D2A")
-    ax5.tick_params(colors="white", labelsize=7)
-    col2.pyplot(fig5, use_container_width=False)
+    fig5, ax5 = plt.subplots(figsize=(4.6, 2.4))
+
+    sns.barplot(
+        data=model_comparison_tuned,
+        x="Model",
+        y="Accuracy",
+        hue="Model",
+        palette="crest",
+        legend=False,
+        ax=ax5)
+
+    style_dark_chart(fig5, ax5, "Accuracy")
+    plt.xticks(rotation=20)
+    col2.pyplot(fig5, use_container_width=True)
 
     st.divider()
 
-# ================= EXPLAINABILITY =================
+
+    # ================= EXPLAINABILITY =================
+
     st.subheader("Model Explainability")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3, gap="small")
 
-    # RF
+    # Random Forest Importance
     with col1:
-        fig6, ax6 = plt.subplots(figsize=(4,2.5))
-        sns.barplot(data=rf_importance, x="Importance", y="Feature", palette="Blues_r")
-        ax6.set_title("Random Forest", color="white", fontsize=10)
-        ax6.set_facecolor("#0B1D2A")
-        fig6.patch.set_facecolor("#0B1D2A")
-        ax6.tick_params(colors="white", labelsize=7)
-        st.pyplot(fig6, use_container_width=False)
 
-    # LR
+        fig6, ax6 = plt.subplots(figsize=(4.3, 2.7))
+
+        sns.barplot(
+            data=rf_importance,
+            x="Importance",
+            y="Feature",
+            hue="Feature",
+            palette="crest",
+            legend=False,
+            ax=ax6)
+
+        style_importance_chart(fig6, ax6, "Random Forest")
+        st.pyplot(fig6, use_container_width=True)
+
+
+    # Logistic Regression Importance
     with col2:
-        fig7, ax7 = plt.subplots(figsize=(4,2.5))
-        sns.barplot(data=lr_importance, x="Importance", y="Feature", palette="light:cyan")
-        ax7.set_title("Logistic Regression", color="white", fontsize=10)
-        ax7.set_facecolor("#0B1D2A")
-        fig7.patch.set_facecolor("#0B1D2A")
-        ax7.tick_params(colors="white", labelsize=7)
-        st.pyplot(fig7, use_container_width=False)
 
-    # SVM centrado
-    col3, col4, col5 = st.columns([1,2,1])
+        fig7, ax7 = plt.subplots(figsize=(4.3, 2.7))
 
-    with col4:
-        fig8, ax8 = plt.subplots(figsize=(5,2.5))
-        sns.barplot(data=svm_importance, x="Importance", y="Feature", palette="mako")
-        ax8.set_title("Support Vector Machine", color="white", fontsize=10)
-        ax8.set_facecolor("#0B1D2A")
-        fig8.patch.set_facecolor("#0B1D2A")
-        ax8.tick_params(colors="white", labelsize=7)
-        st.pyplot(fig8, use_container_width=False)
+        sns.barplot(
+            data=lr_importance,
+            x="Importance",
+            y="Feature",
+            hue="Feature",
+            palette="crest",
+            legend=False,
+            ax=ax7)
+
+        style_importance_chart(fig7, ax7, "Logistic Regression")
+        st.pyplot(fig7, use_container_width=True)
+
+
+    # Support Vector Machine Importance
+    with col3:
+
+        fig8, ax8 = plt.subplots(figsize=(4.3, 2.7))
+
+        sns.barplot(
+            data=svm_importance,
+            x="Importance",
+            y="Feature",
+            hue="Feature",
+            palette="crest",
+            legend=False,
+            ax=ax8)
+
+        style_importance_chart(fig8, ax8, "Support Vector Machine")
+        st.pyplot(fig8, use_container_width=True)
 
     st.divider()
 
-# ================= FAIRNESS =================
+
+    # ================= FAIRNESS =================
+
     st.subheader("Fairness Analysis")
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="small")
 
     col1.write("Gender")
-    col1.dataframe(gender_fairness)
+    col1.dataframe(gender_fairness, use_container_width=True)
 
     col2.write("Age")
-    col2.dataframe(age_fairness)
+    col2.dataframe(age_fairness, use_container_width=True)
