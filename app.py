@@ -161,7 +161,7 @@ def style_legend(ax):
 # ================================
 # LOAD MODELS
 # ================================
-@st.cache_resource
+#@st.cache_resource
 def load_data():
     model_RF = joblib.load("model_RF.pkl")
     model_LR = joblib.load("model_LR.pkl")
@@ -172,7 +172,7 @@ def load_data():
     return model_RF, model_LR, model_SVMC, scaler, list(model_features)
 
 #Loading result tables
-@st.cache_data
+#@st.cache_data
 def load_tables():
     employees = pd.read_csv("employees_clean.csv")
     model_comparison_MB = pd.read_csv("model_comparison_modelbase.csv")
@@ -196,6 +196,11 @@ st.title("Employee Performance Prediction Dashboard")
 section = st.sidebar.selectbox(
     "Select Section",
     ["Individual Prediction", "Dashboard"])
+
+if st.sidebar.button("Clear cache"):
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    st.rerun()
 
 #========================================================================
 # 1. INDIVIDUAL PREDICTION
