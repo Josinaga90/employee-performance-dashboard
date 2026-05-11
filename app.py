@@ -396,7 +396,8 @@ else:
 
     col1.dataframe(
         model_comparison_MB.style.format("{:.2%}", subset=metric_cols_MB),
-        use_container_width=True)
+        use_container_width=True,
+        hide_index=True)
 
     col2.write("Tuned Models")
 
@@ -406,8 +407,10 @@ else:
 
     col2.dataframe(
         model_comparison_tuned.style.format("{:.2%}", subset=metric_cols_tuned),
-        use_container_width=True)
+        use_container_width=True,
+        hide_index=True)
 
+    st.divider()
 
     # ================= PERFORMANCE GRAPHS =================
 
