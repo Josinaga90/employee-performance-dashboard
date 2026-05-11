@@ -1,7 +1,7 @@
 Feature,Importance
-DepartmentType_Production       ,0.04320000000000004
-DepartmentType_Sales,0.03720000000000003
-RaceDesc_Black,0.036666666666666715
-RaceDesc_Hispanic,0.03466666666666672
-DepartmentType_IT/IS,0.024800000000000055
-DepartmentType_Software Engineering,0.023200000000000054
+DepartmentType_Production       ,0.046000000000000006
+RaceDesc_Black,0.041333333333333354
+RaceDesc_Hispanic,0.03813333333333335
+DepartmentType_Sales,0.03533333333333335
+DepartmentType_IT/IS,0.025333333333333354
+RaceDesc_White,0.023866666666666682
