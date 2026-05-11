@@ -14,43 +14,49 @@ st.set_page_config(page_title="Employee Performance Prediction Dashboard", layou
 # ================================
 st.markdown("""
 <style>
+    /* Page spacing */
     .block-container {
-        padding-top: 1.2rem;
+        padding-top: 2.2rem;
         padding-bottom: 0rem;
-        padding-left: 0.8rem;
-        padding-right: 0.8rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
         max-width: 100%;
     }
 
+    /* Main title */
     h1 {
-        font-size: 32px !important;
-        line-height: 1.1 !important;
+        font-size: 30px !important;
+        line-height: 1.2 !important;
         margin-top: 0rem !important;
-        margin-bottom: 0.6rem !important;
+        margin-bottom: 0.8rem !important;
     }
 
+    /* Section subtitles */
     h2 {
-        font-size: 24px !important;
+        font-size: 22px !important;
         line-height: 1.1 !important;
-        margin-top: 0.2rem !important;
+        margin-top: 0.3rem !important;
         margin-bottom: 0.4rem !important;
     }
 
     h3 {
-        font-size: 20px !important;
+        font-size: 18px !important;
         line-height: 1.1 !important;
         margin-top: 0.2rem !important;
         margin-bottom: 0.4rem !important;
     }
 
+    /* Reducing space between blocks */
     div[data-testid="stVerticalBlock"] {
         gap: 0.25rem;
     }
 
+    /* Reducing column spacing */
     div[data-testid="column"] {
-        padding: 0rem 0.15rem;
+        padding: 0rem 0.2rem;
     }
 
+    /* Reducing KPI metric size */
     div[data-testid="stMetric"] {
         padding: 0rem !important;
     }
@@ -71,26 +77,27 @@ st.markdown("""
         line-height: 1.1 !important;
     }
 
+    /* Divider spacing */
     hr {
-        margin-top: 0.6rem !important;
-        margin-bottom: 0.6rem !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ================================
+## ================================
 # HELPER FUNCTIONS
 # ================================
 
-# Function to apply dark style to regular charts
+# Applying the same dark style to regular charts
 def style_dark_chart(fig, ax, title):
 
-    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
+    ax.set_title(title, color="white", fontsize=9, fontweight="bold", pad=4)
 
-    ax.set_facecolor("#061A2E")
-    fig.patch.set_facecolor("#061A2E")
+    ax.set_facecolor("#0B1D2A")
+    fig.patch.set_facecolor("#0B1D2A")
 
-    ax.tick_params(colors="white", labelsize=7)
+    ax.tick_params(colors="white", labelsize=6)
 
     ax.xaxis.label.set_color("white")
     ax.yaxis.label.set_color("white")
@@ -98,24 +105,24 @@ def style_dark_chart(fig, ax, title):
     ax.set_xlabel("")
     ax.set_ylabel("")
 
-    ax.grid(axis="y", color="white", alpha=0.12)
+    ax.grid(axis="y", color="white", alpha=0.15)
     ax.grid(axis="x", color="white", alpha=0.12)
 
     for spine in ax.spines.values():
-        spine.set_color("#061A2E")
+        spine.set_color("#0B1D2A")
 
-    fig.subplots_adjust(left=0.18, right=0.98, top=0.86, bottom=0.20)
+    fig.subplots_adjust(left=0.18, right=0.98, top=0.82, bottom=0.22)
 
 
-# Function to apply dark style to importance charts
+# Applying the same dark style to importance charts
 def style_importance_chart(fig, ax, title):
 
-    ax.set_title(title, color="white", fontsize=10, fontweight="bold", pad=5)
+    ax.set_title(title, color="white", fontsize=9, fontweight="bold", pad=4)
 
-    ax.set_facecolor("#061A2E")
-    fig.patch.set_facecolor("#061A2E")
+    ax.set_facecolor("#0B1D2A")
+    fig.patch.set_facecolor("#0B1D2A")
 
-    ax.tick_params(colors="white", labelsize=7)
+    ax.tick_params(colors="white", labelsize=6)
 
     ax.xaxis.label.set_color("white")
     ax.yaxis.label.set_color("white")
@@ -123,23 +130,23 @@ def style_importance_chart(fig, ax, title):
     ax.set_xlabel("")
     ax.set_ylabel("")
 
-    ax.grid(axis="x", color="white", alpha=0.18)
+    ax.grid(axis="x", color="white", alpha=0.15)
     ax.grid(axis="y", alpha=0)
 
     for spine in ax.spines.values():
-        spine.set_color("#061A2E")
+        spine.set_color("#0B1D2A")
 
-    fig.subplots_adjust(left=0.38, right=0.98, top=0.86, bottom=0.12)
+    fig.subplots_adjust(left=0.42, right=0.98, top=0.82, bottom=0.14)
 
 
-# Function to style legends
+# Applying dark style to legends
 def style_legend(ax):
 
-    legend = ax.legend(fontsize=7, title_fontsize=8)
+    legend = ax.legend(fontsize=6, title_fontsize=7)
 
     if legend is not None:
-        legend.get_frame().set_facecolor("#061A2E")
-        legend.get_frame().set_edgecolor("#061A2E")
+        legend.get_frame().set_facecolor("#0B1D2A")
+        legend.get_frame().set_edgecolor("#0B1D2A")
 
         for text in legend.get_texts():
             text.set_color("white")
@@ -316,7 +323,7 @@ else:
     col1, col2 = st.columns(2, gap="small")
 
     # Performance Distribution
-    fig, ax = plt.subplots(figsize=(4.6, 2.4))
+    fig, ax = plt.subplots(figsize=(3.4, 1.9))
 
     sns.countplot(
         data=eda,
@@ -328,11 +335,11 @@ else:
 
     style_dark_chart(fig, ax, "Performance Distribution")
     plt.xticks(rotation=25)
-    col1.pyplot(fig, use_container_width=True)
+    col1.pyplot(fig, use_container_width=False)
 
 
     # Performance by Gender
-    fig1, ax1 = plt.subplots(figsize=(4.6, 2.4))
+    fig1, ax1 = plt.subplots(figsize=(3.4, 1.9))
 
     sns.countplot(
         data=eda,
@@ -344,11 +351,11 @@ else:
     style_dark_chart(fig1, ax1, "Performance by Gender")
     style_legend(ax1)
     plt.xticks(rotation=25)
-    col2.pyplot(fig1, use_container_width=True)
+    col2.pyplot(fig1, use_container_width=False)
 
 
     # Performance by Department
-    fig2, ax2 = plt.subplots(figsize=(9.6, 2.8))
+    fig2, ax2 = plt.subplots(figsize=(7.2, 2.3))
 
     sns.countplot(
         data=eda,
@@ -360,7 +367,7 @@ else:
     style_dark_chart(fig2, ax2, "Performance by Department")
     style_legend(ax2)
     plt.xticks(rotation=25)
-    st.pyplot(fig2, use_container_width=True)
+    st.pyplot(fig2, use_container_width=False)
 
     st.divider()
 
@@ -387,7 +394,7 @@ else:
     col1, col2 = st.columns(2, gap="small")
 
     # F1 Macro
-    fig4, ax4 = plt.subplots(figsize=(4.6, 2.4))
+    fig4, ax4 = plt.subplots(figsize=(3.4, 1.9))
 
     sns.barplot(
         data=model_comparison_tuned,
@@ -400,11 +407,11 @@ else:
 
     style_dark_chart(fig4, ax4, "F1 Macro")
     plt.xticks(rotation=20)
-    col1.pyplot(fig4, use_container_width=True)
+    col1.pyplot(fig4, use_container_width=False)
 
 
     # Accuracy
-    fig5, ax5 = plt.subplots(figsize=(4.6, 2.4))
+    fig5, ax5 = plt.subplots(figsize=(3.4, 1.9))
 
     sns.barplot(
         data=model_comparison_tuned,
@@ -417,7 +424,7 @@ else:
 
     style_dark_chart(fig5, ax5, "Accuracy")
     plt.xticks(rotation=20)
-    col2.pyplot(fig5, use_container_width=True)
+    col2.pyplot(fig5, use_container_width=False)
 
     st.divider()
 
@@ -431,7 +438,7 @@ else:
     # Random Forest Importance
     with col1:
 
-        fig6, ax6 = plt.subplots(figsize=(4.3, 2.7))
+        fig6, ax6 = plt.subplots(figsize=(3.2, 2.1))
 
         sns.barplot(
             data=rf_importance,
@@ -443,13 +450,13 @@ else:
             ax=ax6)
 
         style_importance_chart(fig6, ax6, "Random Forest")
-        st.pyplot(fig6, use_container_width=True)
+        st.pyplot(fig6, use_container_width=False)
 
 
     # Logistic Regression Importance
     with col2:
 
-        fig7, ax7 = plt.subplots(figsize=(4.3, 2.7))
+        fig7, ax7 = plt.subplots(figsize=(3.2, 2.1))
 
         sns.barplot(
             data=lr_importance,
@@ -461,13 +468,13 @@ else:
             ax=ax7)
 
         style_importance_chart(fig7, ax7, "Logistic Regression")
-        st.pyplot(fig7, use_container_width=True)
+        st.pyplot(fig7, use_container_width=False)
 
 
     # Support Vector Machine Importance
     with col3:
 
-        fig8, ax8 = plt.subplots(figsize=(4.3, 2.7))
+        fig8, ax8 = plt.subplots(figsize=(3.2, 2.1))
 
         sns.barplot(
             data=svm_importance,
@@ -479,7 +486,7 @@ else:
             ax=ax8)
 
         style_importance_chart(fig8, ax8, "Support Vector Machine")
-        st.pyplot(fig8, use_container_width=True)
+        st.pyplot(fig8, use_container_width=False)
 
     st.divider()
 
