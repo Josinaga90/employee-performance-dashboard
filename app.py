@@ -189,12 +189,6 @@ def load_tables():
 model_RF, model_LR, model_SVMC, scaler, model_features = load_data()
 model_comparison_MB, model_comparison_tuned, age_fairness, gender_fairness, employees, rf_importance, lr_importance, svm_importance = load_tables()
 
-st.sidebar.write("Base CSV values:")
-st.sidebar.dataframe(model_comparison_MB)
-
-st.sidebar.write("Tuned CSV values:")
-st.sidebar.dataframe(model_comparison_tuned)
-
 # Dashboard title
 st.title("Employee Performance Prediction Dashboard")
 
